@@ -13,7 +13,7 @@ typedef enum {
 
 extern log_level_t g_log_level;
 
-// 실제 출력 함수 (src/debug.c에 구현됨)
+// 실제 출력 함수 (src/debug.c에 구현)
 void debug_init();
 void debug_log(const char *level, const char *file, int line, const char *fmt, ...);
 

@@ -27,12 +27,12 @@ void debug_log(const char *level,
 {
     char time_buf[64];
     struct timeval tv;
-    gettimeofday(&tv, NULL); // 현재 시간(초, 마이크로초) 가져오기
+    gettimeofday(&tv, NULL); // 현재 시간 가져오기
     time_t t = time(NULL);
 
     struct tm *tm = localtime(&t);
 
-    // 에러 해결 지점: long 타입을 명시하여 millis 선언
+    // [추가] long 타입을 명시하여 millis 선언
     long millis = tv.tv_usec / 1000;
 
     //[추가]

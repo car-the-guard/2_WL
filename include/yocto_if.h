@@ -15,7 +15,7 @@
 
 // 통신 설정
 // UART 장치 경로
-#define UART3_DEV "/dev/ttyAMA3"
+#define UART1_DEV "/dev/ttyAMA1"
 #define PERIOD_YOCTO_MS 50    // 50ms 고속 루프
 #define PERIOD_WL4_S    30    // 30s 주행정보 필터링
 

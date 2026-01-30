@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
+#include "debug.h"
 extern volatile bool g_keep_running;
 extern queue_t q_yocto_to_driving;
 extern driving_status_t g_driving_status;
@@ -31,7 +32,7 @@ void *thread_driving_manager(void *arg) {
         pthread_mutex_unlock(&g_driving_status.lock);
 
         // [수정] 출력부에서도 헬퍼 함수를 사용하여 비트 데이터를 파싱.
-        printf("\x1b[32m[T5-DRIVING] LAT:%.6f, HDG:%u\x1b[0m\n", 
+        DBG_INFO("\x1b[32m[T5-DRIVING] LAT:%.6f, HDG:%u\x1b[0m\n", 
                gps.lat, g_driving_status.heading);
             //    printf("%b DEBUG HERE\r\n", *((uint8_t*)wl4+1));
         

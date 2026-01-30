@@ -1,5 +1,5 @@
 #include "yocto_if.h"
-#include "i2c_io.h"
+//#include "i2c_io.h"
 #include "queue.h"
 //#include "val_msg.h"
 //#include "proto_wl1.h"
@@ -21,8 +21,8 @@
 #include "gps.h"
 
 // I2C 설정 (환경에 맞게 수정 필요)
-#define I2C_BUS_YOCTO  "/dev/i2c-1" 
-#define YOCTO_ADDR      0x27        
+//#define I2C_BUS_YOCTO  "/dev/i2c-1" 
+//#define YOCTO_ADDR      0x27        
 
 extern queue_t q_wl_sec;     // 수신 파이프라인 시작점
 extern queue_t q_yocto_pkt_tx; // 송신 파이프라인 시작점
@@ -54,9 +54,9 @@ static void wait_next_period(struct timespec *next, long ms) {
     clock_nanosleep(CLOCK_MONOTONIC, TIMER_ABSTIME, next, NULL);
 }
 
-// UART3 초기화 함수: 포트 설정(9600bps, 8N1, Raw Mode)
-int UART3_init(void) {
-    int fd = open(UART3_DEV, O_RDWR | O_NOCTTY | O_NDELAY);
+// UART1 초기화 함수: 포트 설정(9600bps, 8N1, Raw Mode)
+int UART1_init(void) {
+    int fd = open(UART1_DEV, O_RDWR | O_NOCTTY | O_NDELAY);
     if (fd < 0) return -1;
 
     struct termios opt;
@@ -82,10 +82,10 @@ int UART3_init(void) {
 void* thread_yocto_if(void* arg) {
     (void)arg;
     
-    // 1. UART3 포트 오픈
-    int uart_fd = UART3_init();
+    // 1. UART1 포트 오픈
+    int uart_fd = UART1_init();
     if (uart_fd < 0) {
-        DBG_ERR("[T9] UART3 (/dev/ttyAMA3) Open Failed!");
+        DBG_ERR("[T9] UART1 (/dev/ttyAMA1) Open Failed!");
         return NULL;
     }
 
@@ -112,7 +112,9 @@ void* thread_yocto_if(void* arg) {
             if (tx_res > 0) {
                 //DBG_INFO("[T9-TX] WL-2(가까운 사고)를 Yocto로 송신 완료");
             }
+            //[에러 원인]
             free(wl2);
+            wl2 = NULL; // 해제 후 NULL로 초기화하는 습관이 중요!
         }
         // --- [B] 수신: Yocto로부터 데이터 읽기 (WL-3, WL-4) ---
         uint8_t rx_buf[256] = {0};
@@ -120,7 +122,7 @@ void* thread_yocto_if(void* arg) {
 
         if (rx_len > 0) {
         uint8_t type = rx_buf[0];
-        printf("yocto로부터 uart3으로 메세지 받음 %lX, %d, %d \r\n", rx_buf, rx_len, type);
+        DBG_INFO("yocto로부터 uart3으로 메세지 받음 %lX, %d, %d \r\n", rx_buf, rx_len, type);
         //printf("DEBUG-- %x %x\r\n", rx_buf[0], rx_buf[1]);
             // 1. 내 사고 정보 (WL-3) -> 패킷 모듈로 직통 전송
             if (type == TYPE_WL3) {
@@ -131,7 +133,7 @@ void* thread_yocto_if(void* arg) {
                     wl3->lane = *(rx_buf + 5);
                     
                     Q_push(&q_yocto_if_to_pkt_tx, wl3); // 신규 직통 큐 사용
-                    printf("\x1b[32m[T9-RX] WL-3 수신: 내 사고 발생 -> PKT-TX로 직통 전달\x1b[0m\n");
+                    DBG_INFO("\x1b[32m[T9-RX] WL-3 수신: 내 사고 발생 -> PKT-TX로 직통 전달\x1b[0m\n");
                 }
             }
             // 2. 주행 정보 (WL-4) -> 주행 관리 모듈로 전송
