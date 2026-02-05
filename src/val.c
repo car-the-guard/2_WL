@@ -174,13 +174,26 @@ void *thread_val(void *arg) {
             if (best_idx != -1) {
                 wl2_packet_t *wl2 = malloc(sizeof(wl2_packet_t));
                 memset(wl2, 0, sizeof(wl2_packet_t));
-                wl2->dist_rsv = (uint16_t)((uint16_t)min_dist << 4);
+
+                // --- Header 설정 ---
+                wl2->stx = 0xFD;
+                wl2->type = 0x02; // WL-2
+                wl2->timestamp = (uint16_t)(get_now_ms() & 0xFFFF);
+                //wl2->dist_rsv = (uint16_t)((uint16_t)min_dist << 4);
+                // --- Payload 설정 (16비트 직접 대입) ---
+                wl2->distance = (uint16_t)min_dist;
                 wl2->lane = accident_list[best_idx].data.accident.lane;
-                wl2->sev_rsv = (accident_list[best_idx].data.analysis.is_danger ? 0x10 : 0x00);
-                
+                //wl2->sev_rsv = (accident_list[best_idx].data.analysis.is_danger ? 0x10 : 0x00);
+                wl2->severity = (accident_list[best_idx].data.analysis.is_danger ? 0x01 : 0x00);
+        
+                // --- Trailer 설정 ---
+                wl2->etx = 0xFE;
+
                 Q_push(&q_val_yocto, wl2);
-                DBG_INFO("VAL: Reporting Nearest -> ID: 0x%lX, Dist: %.1fm", 
-                         accident_list[best_idx].data.accident.accident_id, min_dist);
+                //DBG_INFO("VAL: Reporting Nearest -> ID: 0x%lX, Dist: %.1fm", 
+                  //       accident_list[best_idx].data.accident.accident_id, min_dist);
+                  DBG_INFO("VAL: Reporting Nearest -> ID: 0x%lX, Dist: %u m", 
+                 accident_list[best_idx].data.accident.accident_id, wl2->distance);
             }
         }
         usleep(10000); 

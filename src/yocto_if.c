@@ -102,6 +102,28 @@ void* thread_yocto_if(void* arg) {
     while (g_keep_running) {
         // 50ms 정밀 주기 제어 (WL-2, WL-3을 위해 빠르게 회전)
         wait_next_period(&next_time, PERIOD_YOCTO_MS);
+
+        // --- [A] 송신: VAL에서 온 가장 가까운 사고 정보(WL-2)를 Yocto로 전송 ---
+        // 10바이트 규격(16비트 거리 포함)으로 조립된 WL-2 패킷을 꺼냅니다.
+        wl2_packet_t *wl2 = (wl2_packet_t *)Q_pop_nowait(&q_val_yocto);
+        if (wl2) {
+            // 정수형으로 통일된 10바이트 구조체를 UART로 송신합니다.
+            int expected_len = sizeof(wl2_packet_t); // 10바이트
+            int tx_res = write(uart_fd, wl2, sizeof(wl2_packet_t));
+            // [수정] 0보다 큰 것뿐만 아니라, 전체 길이가 다 나갔는지 확인
+            if (tx_res == expected_len) {
+                // 성공: 10바이트 완벽 전송
+                // DBG_INFO("[T9-TX] WL-2 Full Sent (%d bytes)", tx_res);
+            } else if (tx_res > 0) {
+                // 일부 전송됨 (데이터 유실 가능성)
+                DBG_WARN("[T9-TX] WL-2 Partial Write: %d / %d bytes", tx_res, expected_len);
+            } else {
+                // 전송 실패 (포트 오류 등)
+                perror("[T9-TX] UART Write Error");
+            }
+            free(wl2);
+            wl2 = NULL;
+        }
         //uint8_t rx_buf[256] = {0};
         //int rx_len = read(uart_fd, rx_buf, sizeof(rx_buf)); // <-- read 호출이 여기 있어야 함
 
@@ -142,7 +164,7 @@ void* thread_yocto_if(void* arg) {
                 }
 
                // --- WL-3 처리 (26바이트로 수정) ---
-// Case 2: WL-3 수신 (26바이트: STX + Type + Pad + Time(2) + Data(20) + ETX)
+                // Case 2: WL-3 수신 (26바이트: STX + Type + Pad + Time(2) + Data(20) + ETX)
                 else if (type == TYPE_WL3 && (i + 25) < rx_len) {
                     if (rx_buf[i + 25] == PKT_ETX) {
                         wl3_packet_t *wl3 = malloc(sizeof(wl3_packet_t));
@@ -163,6 +185,7 @@ void* thread_yocto_if(void* arg) {
                         continue;
                     }
                 }
+
             }
        } // for loop 끝
         } // if rx_len 끝
