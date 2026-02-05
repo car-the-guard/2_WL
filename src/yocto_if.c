@@ -20,9 +20,8 @@
 #include "driving_mgr.h"
 #include "gps.h"
 
-// I2C 설정 (환경에 맞게 수정 필요)
-//#define I2C_BUS_YOCTO  "/dev/i2c-1" 
-//#define YOCTO_ADDR      0x27        
+#define PKT_STX 0xFD
+#define PKT_ETX 0xFE
 
 extern queue_t q_wl_sec;     // 수신 파이프라인 시작점
 extern queue_t q_yocto_pkt_tx; // 송신 파이프라인 시작점
@@ -93,9 +92,9 @@ void* thread_yocto_if(void* arg) {
     struct timespec next_time;
     clock_gettime(CLOCK_MONOTONIC, &next_time);
 
-    uint32_t loop_cnt = 0;
+    //uint32_t loop_cnt = 0;
     // 50ms 루프 기준으로 30초는 600번 루프 (30,000ms / 50ms = 600)
-    const uint32_t wl4_trigger = (PERIOD_WL4_S * 1000) / PERIOD_YOCTO_MS;
+    //const uint32_t wl4_trigger = (PERIOD_WL4_S * 1000) / PERIOD_YOCTO_MS;
 
     DBG_INFO("Thread 9: Yocto Interface Module started (UART3 Mode).");
     DBG_INFO("[T9] UART3 모듈 시작 (WL2/3: 50ms, WL4: 30s 주기)");
@@ -103,7 +102,73 @@ void* thread_yocto_if(void* arg) {
     while (g_keep_running) {
         // 50ms 정밀 주기 제어 (WL-2, WL-3을 위해 빠르게 회전)
         wait_next_period(&next_time, PERIOD_YOCTO_MS);
+        //uint8_t rx_buf[256] = {0};
+        //int rx_len = read(uart_fd, rx_buf, sizeof(rx_buf)); // <-- read 호출이 여기 있어야 함
 
+        // --- [B] 수신: Yocto로부터 데이터 읽기 (WL-3, WL-4) ---
+        uint8_t rx_buf[512] = {0};
+        int rx_len = read(uart_fd, rx_buf, sizeof(rx_buf));
+
+        if (rx_len > 0) {
+        //uint8_t type = rx_buf[0];
+        //DBG_INFO("yocto로부터 uart3으로 메세지 받음 %lX, %d, %d \r\n", rx_buf, rx_len, type);
+        // [수정] 여기서 바로 type을 쓰면 에러가 납니다. (아직 선언 안 됨)
+            // 대신 데이터가 들어왔다는 사실과 길이만 먼저 찍어보세요.
+        DBG_INFO("[T9] UART Data Received: %d bytes", rx_len);
+        
+        // [검색 루프] 뭉친 데이터 속에서 PKT_STX(0xFD)를 찾음
+        for (int i = 0; i < rx_len; i++) {
+            // 1. 시작 신호(0xFD) 탐색
+            if (rx_buf[i] == PKT_STX) {
+                if (i + 1 >= rx_len) break; // 타입 확인 불가
+
+                uint8_t type = rx_buf[i + 1];
+
+                // --- WL-4 처리 (8바이트) ---
+                // Case 1: WL-4 수신 (8바이트: STX + Type + Data(5) + ETX)
+                if (type == TYPE_WL4 && (i + 7) < rx_len) {
+                    if (rx_buf[i + 7] == PKT_ETX) {
+                        wl4_packet_t *wl4 = malloc(sizeof(wl4_packet_t));
+                       if (wl4) {
+                                memcpy(wl4, &rx_buf[i], sizeof(wl4_packet_t));
+                                Q_push(&q_yocto_to_driving, wl4);
+                                
+                                uint16_t dir = wl4_get_direction(*wl4);
+                                DBG_INFO("[T9-RX] WL-4 수신: 방향(%d), 시간(%d)", dir, wl4->timestamp);
+                            }
+                            i += 7; // 패킷 크기만큼 건너뜀
+                            continue;
+                        }
+                }
+
+                // --- WL-3 처리 (25바이트) ---
+                // Case 2: WL-3 수신 (25바이트: STX + Type + Data(22) + ETX)
+                else if (type == TYPE_WL3 && (i + 24) < rx_len) {
+                    if (rx_buf[i + 24] == PKT_ETX) {
+                        wl3_packet_t *wl3 = malloc(sizeof(wl3_packet_t));
+                       if (wl3) {
+                                memcpy(wl3, &rx_buf[i], sizeof(wl3_packet_t));
+                                // WL-3 특정 필드 추출 (필요 시)
+                                wl3->accident_id = *((unsigned long long*)(rx_buf + i + 16));
+                                wl3->lane = *(rx_buf + i + 5);
+
+                                Q_push(&q_yocto_if_to_pkt_tx, wl3);
+                                DBG_INFO("\x1b[32m[T9-RX] WL-3 수신: 내 사고 데이터 전달\x1b[0m");
+                            }
+                        i += 24; // 점프
+                        continue;
+                    }
+                }
+            }
+       } // for loop 끝
+        } // if rx_len 끝
+    } // while loop 끝
+
+    close(uart_fd);
+    return NULL;
+}
+    
+    /*
         // --- [A] 송신: VAL에서 온 가장 가까운 사고 정보(WL-2) 전송 ---
         wl2_packet_t *wl2 = (wl2_packet_t *)Q_pop_nowait(&q_val_yocto);
         if (wl2) {
@@ -121,6 +186,7 @@ void* thread_yocto_if(void* arg) {
         int rx_len = read(uart_fd, rx_buf, sizeof(rx_buf));
 
         if (rx_len > 0) {
+    
         uint8_t type = rx_buf[0];
         DBG_INFO("yocto로부터 uart3으로 메세지 받음 %lX, %d, %d \r\n", rx_buf, rx_len, type);
         //printf("DEBUG-- %x %x\r\n", rx_buf[0], rx_buf[1]);
@@ -137,7 +203,7 @@ void* thread_yocto_if(void* arg) {
                 }
             }
             // 2. 주행 정보 (WL-4) -> 주행 관리 모듈로 전송
-            else if (type == TYPE_WL4 || type == 5) {
+            /*else if (type == TYPE_WL4 || type == 5) {
                 // 테스트를 위해 주기 조건을 주석 처리.
                 //printf("DEBUG HERE %d\r\n", wl4_trigger);
 
@@ -149,213 +215,40 @@ void* thread_yocto_if(void* arg) {
                         DBG_INFO("[T9-RX] WL-4 수신: 주행 정보 업데이트 (30s 주기)");
                     }
                 // }
+            }*/
+            /*
+            // 2. 주행 정보 (WL-4) -> 주행 관리 모듈로 전송
+            else if (type == TYPE_WL4) { 
+                
+                // 큐에 넣을 메모리 할당 (동적 할당을 써야만 하는 큐 구조라면 유지)
+                wl4_packet_t *wl4 = (wl4_packet_t *)malloc(sizeof(wl4_packet_t));
+                
+                if (wl4) {
+                    // [핵심] 설계한 6바이트 구조체 크기만큼 한 번에 복사
+                    // rx_buf의 내용이 wl4_packet_t 구조에 맞춰져 있으므로 지연 없이 복사됨
+                    memcpy(wl4, rx_buf, sizeof(wl4_packet_t));
+                    
+                    // 3. 큐에 푸시 (void 함수이므로 그냥 호출)
+                    Q_push(&q_yocto_to_driving, wl4);
+                        // 디버깅 시 실제 데이터 확인용 (필요 시 주석 해제)
+                    uint16_t dir = wl4_get_direction(*wl4);
+                    DBG_INFO("[T9-RX] WL-4 수신: 방향(%d), 시간(%d)", dir, wl4->timestamp);
+                    DBG_INFO("[T9-RX] WL-4 수신: 주행 정보 업데이트");
+                    }
+                }
             }
-        }
+            
 
-        loop_cnt++;
-        if (loop_cnt >= wl4_trigger) loop_cnt = 0;
+
+        //}
+
+        //loop_cnt++;
+        //if (loop_cnt >= wl4_trigger) loop_cnt = 0;
     }
-
+    */
+    /*}
     close(uart_fd);
     return NULL;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//#ifdef SIMULATION
-        // --- 시뮬레이션 데이터 생성 (테스트용) ---
-        /*if (loop_cnt > 0 && loop_cnt % 100 == 0) { 
-            rx_buf[0] = TYPE_WL3;
-            uint64_t aid = 2000 + loop_cnt;
-            memcpy(&rx_buf[15], &aid, 8); 
-            rx_len = 23;
-        }
-//#else
-        // --- [수정] 실제 하드웨어 수신 (UART3 read) ---
-        //rx_len = read(uart_fd, rx_buf, sizeof(rx_buf));
-//#endif
-
-        // [1] 데이터 수신 처리
-        if (rx_len > 0) {
-            if (rx_buf[0] == TYPE_WL3) {
-                wl3_packet_t *wl3 = malloc(sizeof(wl3_packet_t));
-                if (wl3) {
-                    memcpy(wl3, rx_buf, sizeof(wl3_packet_t));
-                    Q_push(&q_pkt_val, wl3);
-                    printf("\x1b[31m[T9-RX] WL-3 Received (AID:0x%lX)\x1b[0m\n", wl3->accident_id);
-                }
-            } else if (rx_buf[0] == TYPE_WL4) {
-                wl4_packet_t *wl4 = malloc(sizeof(wl4_packet_t));
-                if (wl4) {
-                    memcpy(wl4, rx_buf, sizeof(wl4_packet_t));
-                    Q_push(&q_yocto_to_driving, wl4);
-                    printf("\x1b[34m[T9-RX] WL-4 Received\x1b[0m\n");
-                }
-            }
-        }
-
-        // [2] 데이터 송신 처리 (WL-2 결과 전송)
-        wl2_packet_t *wl2 = (wl2_packet_t *)Q_pop_nowait(&q_val_yocto);
-        if (wl2) {
-//#ifdef SIMULATION
-            uint16_t distance = (wl2->dist_rsv >> 4); 
-            printf("\x1b[35m[T9-TX-SIM] WL-2 Dist: %dm\x1b[0m\n", distance);
-//#else
-            // [수정] 실제 UART3 전송 (write)
-            //int tx_res = write(uart_fd, wl2, sizeof(wl2_packet_t));
-            //if (tx_res > 0) {
-                //printf("\x1b[35m[T9-TX-HW] WL-2 Result Sent to Partner Pi\x1b[0m\n");
-            //}
-//#endif
-            free(wl2);
-        }
-        loop_cnt++;
-    }
-
-    close(uart_fd);
-    return NULL;
-}
-
-
-/*void* thread_yocto_if(void* arg) {
-    (void)arg;
-    struct timespec next_time;
-    clock_gettime(CLOCK_MONOTONIC, &next_time);
-    uint32_t loop_cnt = 0;
-    const uint32_t wl4_trigger = (PERIOD_WL4_S * 1000) / PERIOD_YOCTO_MS;
-
-    DBG_INFO("Thread 9: Yocto Interface Module started.");
-while (g_keep_running) {
-        // 정밀 주기 제어 (예: 100ms)
-        wait_next_period(&next_time, PERIOD_YOCTO_MS);
-
-        uint8_t rx_buf[128] = {0};
-        int rx_len = 0;
-
-#ifdef SIMULATION
-        // --- 시뮬레이션 데이터 생성 ---
-        if (loop_cnt > 0 && loop_cnt % 100 == 0) { // 사고(WL-3)
-            rx_buf[0] = TYPE_WL3;
-            uint64_t aid = 2000 + loop_cnt;
-            memcpy(&rx_buf[15], &aid, 8); 
-            rx_len = 23;
-        } else if (loop_cnt % wl4_trigger == 0) { // 주행(WL-4)
-            rx_buf[0] = TYPE_WL4;
-            uint16_t hdg = 180; int32_t alt = 150;
-            memcpy(&rx_buf[1], &hdg, 2); memcpy(&rx_buf[3], &alt, 4);
-            rx_len = 17;
-        }
-#else
-        // --- 실제 하드웨어 수신 (i2c_io.c의 함수 사용) ---
-        // I2C_BUS_YOCTO는 "/dev/i2c-1", YOCTO_ADDR은 상대방 주소
-        rx_len = I2C_read_data(I2C_BUS_YOCTO, YOCTO_ADDR, rx_buf, sizeof(rx_buf));
-#endif
-
-        // [1] 데이터 수신 처리
-        if (rx_len > 0) {
-            if (rx_buf[0] == TYPE_WL3) {
-                wl3_packet_t *wl3 = malloc(sizeof(wl3_packet_t));
-                if (wl3) {
-                    memcpy(wl3, rx_buf, sizeof(wl3_packet_t));
-                    Q_push(&q_pkt_val, wl3);
-                    printf("\x1b[31m[T9-RX] WL-3 High-Priority (AID:0x%lX)\x1b[0m\n", wl3->accident_id);
-                }
-            } else if (rx_buf[0] == TYPE_WL4) {
-                wl4_packet_t *wl4 = malloc(sizeof(wl4_packet_t));
-                if (wl4) {
-                    memcpy(wl4, rx_buf, sizeof(wl4_packet_t));
-                    Q_push(&q_yocto_to_driving, wl4);
-                    printf("\x1b[34m[T9-RX] WL-4 Periodic Update\x1b[0m\n");
-                }
-            }
-        }
-
-        // [2] 데이터 송신 처리 (WL-2 결과 전송)
-        wl2_packet_t *wl2 = (wl2_packet_t *)Q_pop_nowait(&q_val_yocto);
-        if (wl2) {
-#ifdef SIMULATION
-            uint16_t distance = (wl2->dist_rsv >> 4); 
-            printf("\x1b[35m[T9-TX-SIM] WL-2 Result -> Dist: %dm, Lane: %d\x1b[0m\n", distance, wl2->lane);
-#else
-            // 실제 I2C 전송 (i2c_io.c의 함수 사용)
-            int tx_res = I2C_write_data(I2C_BUS_YOCTO, YOCTO_ADDR, (uint8_t*)wl2, sizeof(wl2_packet_t));
-            if (tx_res > 0) {
-                printf("\x1b[35m[T9-TX-HW] WL-2 Result Sent to Yocto\x1b[0m\n");
-            }
-#endif
-            free(wl2); // 송신 후 메모리 해제
-        }
-        loop_cnt++;
-    }
-    return NULL;
-}
-*/
-
-
-/*void *thread_yocto_if(void *arg) {
-    sleep(2); // GPS 스레드가 좌표를 잡을 때까지 2초 대기
-    (void)arg;
-    //int step = 0;             // [추가] 이 줄이 반드시 있어야 합니다!
-    uint16_t test_dist = 600;
-    DBG_INFO("Thread 9: Yocto Interface Module started (Simulation Mode).");
-
-    
-    // 시연용 고정 사고 지점 설정 (수신차의 경로 앞쪽)
-    // 수신차가 37.5650에서 시작하므로, 그보다 북쪽인 37.5665로 설정
-    const double ACCIDENT_LAT = 37.566500;
-    const double ACCIDENT_LON = 126.978000;
-    const uint32_t ACCIDENT_ID = 0xAAAA; // 사고 고유 번호
-    
-
-    DBG_INFO("Thread 9: Yocto Interface Module started (Accident Vehicle 0x1111).");
-
-    while (g_keep_running) {
-       
-        wl1_packet_t *pkt = malloc(sizeof(wl1_packet_t));
-        if (!pkt) continue;
-        memset(pkt, 0, sizeof(wl1_packet_t));
-        
-        // 1. 송신자 정보 설정
-        pkt->sender.sender_id = 0x1111; // 내 ID
-        pkt->header.ttl = 3;           // 중계 가능 횟수
-
-        // 2. 사고 정보 및 고정 좌표 설정
-        // 실제 GPS와 상관없이 시뮬레이션을 위해 고정된 사고 지점 좌표를 패킷에 담음
-        pkt->accident.accident_id = ACCIDENT_ID;
-        pkt->sender.lat_uDeg = (int32_t)(ACCIDENT_LAT * 1000000.0);
-        pkt->sender.lon_uDeg = (int32_t)(ACCIDENT_LON * 1000000.0);
-        
-        pkt->accident.lane = 1;        // 1차선 사고
-        pkt->accident.type = 3;        // 사고 유형 (예: 차량 고장)
-        
-
-        // 0. 안전하게 내 현재 위치 정보 가져오기
-        gps_data_t my_pos = GPS_get_latest();
-        int32_t my_lat_uDeg = (int32_t)(my_pos.lat * 1000000.0);
-        int32_t my_lon_uDeg = (int32_t)(my_pos.lon * 1000000.0);
-        
-
-        Q_push(&q_pkt_sec_tx, pkt);
-        printf("\x1b[31m[TX-1111] 사고 발생 송신 중! ID:0x%X, 위도:%.6f\x1b[0m\n", 
-                ACCIDENT_ID, ACCIDENT_LAT); 
-        // ----------------------------
-
-        //step++;
-        sleep(3); // 5초 대기
-    }
-
-    DBG_INFO("Thread 9: Yocto Interface Module terminating.");
-    return NULL;
 }
 */

@@ -20,7 +20,7 @@
 #define PERIOD_WL4_S    30    // 30s 주행정보 필터링
 
 // 패킷 타입
-#define TYPE_WL2 0x02  // Wireless -> Yocto (상태 보고)
+#define TYPE_WL2 0x02  
 #define TYPE_WL3 0x03
 #define TYPE_WL4 0x04
 

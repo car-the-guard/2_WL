@@ -185,7 +185,7 @@ void *final_test_thread_wUART(void *arg) {
 
         // 2. 주행 데이터(WL-4) 처리 (기존 큐 방식 유지 가능)
         // [수정] 15초에 한 번만 WL-4 송신
-        if (wl4_counter % 15 == 0) {
+        /*if (wl4_counter % 15 == 0) {
             wl4_packet_t wl4_pkt;
             memset(&wl4_pkt, 0, sizeof(wl4_packet_t));
             ((uint8_t *)&wl4_pkt)[0] = 0x04;
@@ -195,7 +195,33 @@ void *final_test_thread_wUART(void *arg) {
             write(uart_fd, &wl4_pkt, sizeof(wl4_packet_t));
             printf("[TEST] WL-4 주행 패킷 송신 (15초 주기)\n");
         }
+        */
+        // [수정된 테스트 송신 코드]
+        if (wl4_counter % 15 == 0) {
+            wl4_packet_t wl4_pkt;
+            memset(&wl4_pkt, 0, sizeof(wl4_packet_t));
+
+            // 1. 헤더 설정
+            wl4_pkt.stx = 0xFD;          // PKT_STX
+            wl4_pkt.type = 0x04;         // TYPE_WL4
+            wl4_pkt.reserved_pad = 0x00;
+            wl4_pkt.timestamp = 1234;    // 테스트용 타임스탬프 (0이 아닌 값)
+            
+
+            // 2. 데이터 설정 (헬퍼 함수 사용)
+            wl4_set_direction(&wl4_pkt, 37); // 테스트용 방향
+            wl4_pkt.etx = 0xFE;          // PKT_ETX
+            // 3. 전송
+            write(uart_fd, &wl4_pkt, sizeof(wl4_packet_t));
+            
+            // [추가] 내가 보낸 6바이트가 메모리에 어떻게 생겼나 찍어보기
+            // HEX 로그 확인용
+            uint8_t *p = (uint8_t *)&wl4_pkt;
+            printf("[TEST-TX] HEX: %02X %02X %02X %02X %02X %02X %02X %02X\n", 
+                    p[0], p[1], p[2], p[3], p[4], p[5], p[6], p[7]);
+        }
         wl4_counter++;
+        
 
         // 3. 사고 발생 시 UART 드라이버로 직접 Write
         if (arrived) {
@@ -221,7 +247,7 @@ void *final_test_thread_wUART(void *arg) {
             }
         }
 
-        sleep(1); 
+        sleep(8); 
     }
     return NULL;
 }

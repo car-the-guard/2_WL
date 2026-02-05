@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 
-#pragma pack(push, 1)
+
 
 // ======================================
 // WL-3 Debug / Yocto Internal Packet
@@ -20,22 +20,25 @@
 // Byte 7-14 : accident_time (64b)
 // Byte 15-22 :  accident_id      // 8 bytes (Yocto가 생성한 고유 ID)
 // ======================================
-
+#pragma pack(push, 1)
 typedef struct {
-    uint8_t  accident_type;
+    // --- 프레임 헤더 ---
+    uint8_t  stx;             // 0xFD
+
+    uint8_t  type;            // 0x03 (TYPE_WL3)
+    uint8_t  reserved_pad;    // 바이트 패딩
+    uint16_t timestamp;       // ms 단위 타임스탬프
     
-    uint16_t  debug_time;
-    //uint8_t  accident_type;
-
-    uint8_t  sev_action;   // [7:4] severity / [3:0] action
-
+    // --- 데이터 필드 ---
+    uint16_t direction;  //[15:7] direction(9b) / [6:0] reserved
     uint8_t  lane;
+    uint8_t  severity;      
 
-    uint16_t dir_rsv;      // [15:7] direction(9b) / [6:0] reserved
-
-    uint64_t accident_time;
-
-    uint64_t accident_id;
+    uint64_t accident_id;     // Decision이 결정한 ID
+    uint64_t accident_time;   // Decision이 기록한 시간
+    
+    // --- 프레임 트레일러 ---
+    uint8_t  etx;             // 0xFE
 } wl3_packet_t;
 
 #pragma pack(pop)
