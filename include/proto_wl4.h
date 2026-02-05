@@ -31,8 +31,9 @@ typedef struct {
 
     // --- Payload (2 Bytes) ---
     // 상위 9비트를 direction으로 쓰고 싶다면:
-    uint16_t reserved  : 7;  // [비트 0~6] 하위 7비트
-    uint16_t direction : 9;  // [비트 7~15] 상위 9비트 (읽기 연산 시 유리)
+    //uint16_t reserved  : 7;  // [비트 0~6] 하위 7비트
+    // [수정] 비트필드를 제거하고 16비트 정수형으로 통일
+    uint16_t direction;  // [비트 7~15] 상위 9비트 (읽기 연산 시 유리)
 
     uint8_t  etx;           // 0xFE 고정
 
@@ -42,17 +43,19 @@ typedef struct {
 
 _Static_assert(sizeof(wl4_packet_t) == 8, "WL4 packet must be 8 bytes");
 
-// -------- Direction (상위 9비트 필드 접근) --------
+// -------- Direction (uint16_t 직접 접근) --------
 static inline uint16_t wl4_get_direction(wl4_packet_t pkt)
 {
-    // 컴파일러가 내부적으로 (data >> 7) & 0x1FF 연산을 수행합니다.
-    return (uint16_t)pkt.direction;
+    // 이제 비트 연산 없이 값을 그대로 반환합니다.
+    return pkt.direction;
 }
 
 static inline void wl4_set_direction(wl4_packet_t *pkt, uint16_t dir)
 {
-    // 9비트(0~511) 범위를 초과하지 않도록 마스킹 후 대입
-    pkt->direction = (dir & 0x01FF);
+    // 비트 마스킹 없이 입력받은 각도(0~359)를 그대로 대입합니다.
+    if (pkt) {
+        pkt->direction = dir;
+    }
 }
 
 // -------- Timestamp (uint16_t 직접 접근) --------
@@ -66,14 +69,5 @@ static inline void wl4_set_timestamp(wl4_packet_t *pkt, uint16_t ts)
     pkt->timestamp = ts;
 }
 
-// -------- Reserved (하위 7비트 필드 접근) --------
-static inline uint8_t wl4_get_reserved7(wl4_packet_t pkt)
-{
-    return (uint8_t)pkt.reserved;
-}
 
-static inline void wl4_set_reserved7(wl4_packet_t *pkt, uint8_t res)
-{
-    pkt->reserved = (res & 0x7F);
-}
 #endif

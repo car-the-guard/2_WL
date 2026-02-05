@@ -20,7 +20,10 @@
 
 #include <fcntl.h>    // open, O_RDWR 등을 위해 필요
 #include <termios.h>  // UART 속도(Baudrate) 설정을 위해 권장
+#include <stddef.h> // offsetof 사용을 위해 필요
 
+#define PKT_STX 0xFD
+#define PKT_ETX 0xFE
 
 // 외부 파일(pkt.c, sec.c, wl.c 등)에서 정의된 스레드 함수들 선언
 extern void *thread_rx(void *arg);       // T1
@@ -81,6 +84,13 @@ void signal_handler(int sig) {
     Q_push(&q_val_yocto, NULL); Q_push(&q_yocto_to_driving, NULL);
     Q_push(&q_yocto_if_to_pkt_tx, NULL); // [추가] 신규 큐 종료 처리
     DBG_INFO("[MAIN] Shutdown signal received. Cleaning up...\n");
+}
+
+// [추가] 밀리초 단위 타임스탬프 반환 함수
+static uint64_t get_current_timestamp_ms() {
+    struct timeval tv;
+    gettimeofday(&tv, NULL);
+    return (uint64_t)tv.tv_sec * 1000 + tv.tv_usec / 1000;
 }
 
 /*
@@ -209,7 +219,7 @@ void *final_test_thread_wUART(void *arg) {
             
 
             // 2. 데이터 설정 (헬퍼 함수 사용)
-            wl4_set_direction(&wl4_pkt, 37); // 테스트용 방향
+            wl4_set_direction(&wl4_pkt, 43); // 테스트용 방향
             wl4_pkt.etx = 0xFE;          // PKT_ETX
             // 3. 전송
             write(uart_fd, &wl4_pkt, sizeof(wl4_packet_t));
@@ -217,7 +227,7 @@ void *final_test_thread_wUART(void *arg) {
             // [추가] 내가 보낸 6바이트가 메모리에 어떻게 생겼나 찍어보기
             // HEX 로그 확인용
             uint8_t *p = (uint8_t *)&wl4_pkt;
-            printf("[TEST-TX] HEX: %02X %02X %02X %02X %02X %02X %02X %02X\n", 
+            DBG_INFO("[TEST-TX] HEX: %02X %02X %02X %02X %02X %02X %02X %02X\n", 
                     p[0], p[1], p[2], p[3], p[4], p[5], p[6], p[7]);
         }
         wl4_counter++;
@@ -227,27 +237,48 @@ void *final_test_thread_wUART(void *arg) {
         if (arrived) {
             wl3_packet_t test_wl3;
             memset(&test_wl3, 0, sizeof(wl3_packet_t));
+            /*
             ((uint8_t *)&test_wl3)[0] = 0x03; // WL-3 타입
             test_wl3.accident_type = 3;
             test_wl3.lane = 2;
             test_wl3.accident_id = 0x1234567812345678ULL;
+            */
 
-            // [Latency 측정 시작점]
-            struct timespec tx_time;
-            clock_gettime(CLOCK_MONOTONIC, &tx_time);
+            // --- 프레임 및 헤더 설정 ---
+    test_wl3.stx = PKT_STX;          // 0xFD
+    test_wl3.type = TYPE_WL3;        // 0x03
+    test_wl3.timestamp = 1234;       // 임의의 ms 타임스탬프
 
-            // 물리적 UART 드라이버에 쓰기
-            ssize_t sent = write(uart_fd, &test_wl3, sizeof(wl3_packet_t));
+    // --- 데이터 페이로드 설정 (memcpy 구간) ---
+    
+    wl3_set_direction(&test_wl3, 40); 
+    
+    test_wl3.lane = 2;               // 2차선
+    test_wl3.severity = 1;           // 위험도 설정
+    
+    // 64비트 ID 및 시간 설정
+    test_wl3.accident_id = 0x1234567812345678ULL; 
+    test_wl3.accident_time = get_current_timestamp_ms(); // 현재 시간 기록
+
+    // --- 프레임 종료 ---
+    test_wl3.etx = PKT_ETX;          // 0xFE
+
+    // [Latency 측정 시작점]
+    struct timespec tx_time;
+    clock_gettime(CLOCK_MONOTONIC, &tx_time);
+
+    // 물리적 UART 드라이버에 쓰기
+    ssize_t sent = write(uart_fd, &test_wl3, sizeof(wl3_packet_t));
             
-            if (sent > 0) {
-                printf("[UART-TX] Success: WL-3 sent via HW (%ld bytes) at %ld.%06ld\n", 
-                        sent, tx_time.tv_sec, tx_time.tv_nsec / 1000);
-            } else {
-                perror("[UART-TX] Failed to write to /dev/ttyAMA1");
-            }
+    if (sent > 0) {
+        DBG_INFO("[UART-TX] Success: WL-3 sent via HW (%ld bytes) at %ld.%06ld\n", 
+                sent, tx_time.tv_sec, tx_time.tv_nsec / 1000);
+    } else {
+        perror("[UART-TX] Failed to write to /dev/ttyAMA1");
         }
+    }
 
-        sleep(8); 
+    sleep(8); 
     }
     return NULL;
 }

@@ -141,21 +141,25 @@ void* thread_yocto_if(void* arg) {
                         }
                 }
 
-                // --- WL-3 처리 (25바이트) ---
-                // Case 2: WL-3 수신 (25바이트: STX + Type + Data(22) + ETX)
-                else if (type == TYPE_WL3 && (i + 24) < rx_len) {
-                    if (rx_buf[i + 24] == PKT_ETX) {
+               // --- WL-3 처리 (26바이트로 수정) ---
+// Case 2: WL-3 수신 (26바이트: STX + Type + Pad + Time(2) + Data(20) + ETX)
+                else if (type == TYPE_WL3 && (i + 25) < rx_len) {
+                    if (rx_buf[i + 25] == PKT_ETX) {
                         wl3_packet_t *wl3 = malloc(sizeof(wl3_packet_t));
                        if (wl3) {
+                                // 구조체 크기(26바이트)만큼 한 번에 복사
                                 memcpy(wl3, &rx_buf[i], sizeof(wl3_packet_t));
                                 // WL-3 특정 필드 추출 (필요 시)
-                                wl3->accident_id = *((unsigned long long*)(rx_buf + i + 16));
-                                wl3->lane = *(rx_buf + i + 5);
+                                //wl3->accident_id = *((unsigned long long*)(rx_buf + i + 16));
+                                //wl3->lane = *(rx_buf + i + 5);
+                                // [참고] 이제 memcpy로 모든 필드가 들어왔으므로 
+                                // 아래와 같은 수동 추출은 생략하거나 구조체 멤버로 접근하면 됩니다.
+                                // 예: wl3->accident_id = ... (이미 memcpy로 들어옴)
 
                                 Q_push(&q_yocto_if_to_pkt_tx, wl3);
                                 DBG_INFO("\x1b[32m[T9-RX] WL-3 수신: 내 사고 데이터 전달\x1b[0m");
                             }
-                        i += 24; // 점프
+                        i += 25; // [수정] 패킷 크기만큼 점프
                         continue;
                     }
                 }

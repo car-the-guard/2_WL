@@ -105,7 +105,7 @@ void *thread_val(void *arg) {
                     uint16_t display_dist = (uint16_t)dist_2d;
 
                     printf("\x1b[1;32m[VAL-WARN] 동일 방향 사고! LCD 출력 시도\x1b[0m\n");
-                    LCD_display_v2x_mode(mode, g_sender_id, rx->accident.accident_id, display_dist, rx->accident.lane, rx->accident.type);
+                    //LCD_display_v2x_mode(mode, g_sender_id, rx->accident.accident_id, display_dist, rx->accident.lane, rx->accident.type);
 
                     // --- 사고 리스트 업데이트 ---
                     int target_idx = -1;
