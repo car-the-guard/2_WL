@@ -13,8 +13,14 @@
 #include <unistd.h>
 #include <pthread.h>
 #include <sys/time.h>
+
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+
 #include <fcntl.h>
 #include <termios.h>
+
 #include <string.h>
 #include "debug.h"
 #include "driving_mgr.h"
@@ -22,6 +28,8 @@
 
 #define PKT_STX 0xFD
 #define PKT_ETX 0xFE
+
+// 차1은 송신이라 디스플레이 포트 번호랑 필요한 변수 include 선언 안함
 
 extern queue_t q_wl_sec;     // 수신 파이프라인 시작점
 extern queue_t q_yocto_pkt_tx; // 송신 파이프라인 시작점
