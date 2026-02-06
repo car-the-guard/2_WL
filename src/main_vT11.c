@@ -269,6 +269,8 @@ void *final_test_thread_wUART(void *arg) {
 
     // 물리적 UART 드라이버에 쓰기
     ssize_t sent = write(uart_fd, &test_wl3, sizeof(wl3_packet_t));
+    // 사고 전송 후에는 2~3초 정도 쉬면서 수신 보드의 타임아웃(5초)을 방어
+            //sleep(2);
             
     if (sent > 0) {
         DBG_INFO("[UART-TX] Success: WL-3 sent via HW (%ld bytes) at %ld.%06ld\n", 
@@ -277,8 +279,9 @@ void *final_test_thread_wUART(void *arg) {
         perror("[UART-TX] Failed to write to /dev/ttyAMA1");
         }
     }
+    
 
-    sleep(8); 
+    sleep(2); 
     }
     return NULL;
 }
