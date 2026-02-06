@@ -6,6 +6,7 @@
 #include <unistd.h>
 #include <pthread.h>
 #include <sys/time.h>
+#include <stddef.h> // offsetof 사용을 위해 필요
 
 #include "pkt.h"
 #include "queue.h"
@@ -16,6 +17,9 @@
 #include "proto_wl3.h"
 #include "driving_mgr.h"
 
+
+#define PKT_STX 0xFD
+#define PKT_ETX 0xFE
 
 extern queue_t q_pkt_val;       // RX 패킷 -> VAL 모듈 전달용
 extern queue_t q_sec_rx_pkt;    // 보안 검증 완료된 수신 패킷 큐
@@ -32,6 +36,14 @@ static uint64_t get_current_timestamp_us() {
     gettimeofday(&tv, NULL);
     return (uint64_t)(tv.tv_sec) * 1000000 + (uint64_t)(tv.tv_usec);
 }
+
+// [추가] 밀리초 단위 타임스탬프 반환 함수
+static uint64_t get_current_timestamp_ms() {
+    struct timeval tv;
+    gettimeofday(&tv, NULL);
+    return (uint64_t)tv.tv_sec * 1000 + tv.tv_usec / 1000;
+}
+
 void *sub_thread_pkt_tx(void *arg) {
     (void)arg;
     DBG_INFO("  - PKT-TX Sub-thread started (Dual-Path Aggregation).");
@@ -39,7 +51,7 @@ void *sub_thread_pkt_tx(void *arg) {
     while (g_keep_running) {
         wl1_packet_t *pkt = NULL; // 매 루프마다 초기화
 
-        // --- [경로 1] 내 사고 정보 (Yocto 직통 큐) 우선 확인 ---
+        // --- [경로 1] 내 사고 정보 (Yocto 직통 큐: 26B 규격) 우선 확인 ---
         // pop_nowait를 써야 데이터가 없어도 바로 다음(릴레이 큐)으로 넘어간다.
         wl3_packet_t *wl3 = Q_pop_nowait(&q_yocto_if_to_pkt_tx);
         
@@ -49,32 +61,72 @@ void *sub_thread_pkt_tx(void *arg) {
             if (pkt) {
                 memset(pkt, 0, sizeof(wl1_packet_t));
                 // Yocto(WL-3) 데이터를 무선 규격(WL-1)으로 맵핑
-                /* --- HEADER 조립 --- */
+
+
+                /* --- [1] HEADER 조립 --- */
                 pkt->header.version  = 0x01;
-                pkt->header.msg_type = 0x03; // WL-3 기반 사고 알림 타입
+                //pkt->header.msg_type = 0x03; // WL-3 기반 사고 알림 타입
+                pkt->header.msg_type = wl3->type; 
                 pkt->header.ttl      = 3;    // 최초 발생 패킷 TTL 설정
                 pkt->header.reserved = 0x00;
 
-                /* --- ACCIDENT 조립 (Yocto 데이터 활용) --- */
-                pkt->accident.accident_id = wl3->accident_id;
-                pkt->accident.type        = wl3->accident_type; 
-                pkt->accident.lane        = wl3->lane;
+                /*
+                //pkt->accident.type        = 0x03; 
                 
-                // 위도/경도/고도 주입
+                // 비트 필드 헬퍼 함수를 사용하여 방향 추출
+                pkt->accident.direction = wl3_get_direction(wl3);
+                pkt->accident.lane        = wl3->lane;
+                // [추가] Severity 설정
+                // WL-3의 severity(1바이트)를 WL-1의 해당 필드에 대입
+                // 만약 WL-1 구조체에 severity 필드가 있다면 아래와 같이 직접 대입합니다.
+                pkt->accident.severity      = wl3->severity;
+
+                /* --- [수정 포인트] ACCIDENT 조립 (26B 규격 데이터 맵핑) --- */
+                //pkt->accident.accident_id = wl3->accident_id;
+                //pkt->accident.accident_time = wl3->accident_time; // [추가] Decision이 기록한 64비트 시간
+            
+                /* --- [2] 핵심 페이로드 구간(20B) 메모리 복사 --- */
+                // Direction(2) + Lane(1) + Severity(1) + Time(8) + ID(8) = 총 20바이트
+                // WL-3의 reserved(비트필드 포함 2B) 위치부터 WL-1의 accident.direction으로 복사합니다.
+                //memcpy(&(pkt->accident.direction), &(wl3->reserved), 20);
+                // wl3 구조체 내에서 reserved 비트필드가 속한 바이트의 오프셋을 계산
+                //size_t offset = offsetof(wl3_packet_t, lane) - 2; // lane(Byte 7) 앞의 2바이트 지점
+                //memcpy(&(pkt->accident.direction), (uint8_t *)wl3 + offset, 20);
+
+
+                memcpy(&(pkt->accident.direction), (uint8_t *)wl3 + 5, 20);
+                /* --- [3] 앞뒤 부족한 GPS 정보는 직접 참조(Reference)로 주입 --- */
+                // 위도/경도/고도는 WL-3에 없으므로 g_driving_status에서 직접 가져옵니다.
                 pkt->accident.lat_uDeg  = (int32_t)(g_driving_status.lat * 1000000.0);
                 pkt->accident.lon_uDeg  = (int32_t)(g_driving_status.lon * 1000000.0);
                 pkt->accident.alt_mm    = (int32_t)(g_driving_status.alt * 1000.0);
 
                 // 사고 정보의 방향(Direction)을 WL-4에서 받은 최신 주행 방향으로 설정
                 // 내 차량이 사고가 난 것이므로, 현재 내 주행 방향이 사고 방향이다.
-                pthread_mutex_lock(&g_driving_status.lock);
-                pkt->accident.direction = (uint16_t)g_driving_status.heading;
-                pthread_mutex_unlock(&g_driving_status.lock);
+                //pthread_mutex_lock(&g_driving_status.lock);
+                //pkt->accident.direction = (uint16_t)g_driving_status.heading;
+                //pthread_mutex_unlock(&g_driving_status.lock);
                 
                 // 로그에서 %lX를 써야 64비트가 다 보임.
-                DBG_INFO("\x1b[32m[PKT-TX] 내 사고 조립 완료 (ID: 0x%lX, Dir: %d, Lane: %d)\x1b[0m", 
-                    wl3->accident_id, pkt->accident.direction, pkt->accident.lane);
-                
+                //DBG_INFO("\x1b[32m[PKT-TX] 내 사고 조립 완료 (ID: 0x%lX, Dir: %d, Lane: %d)\x1b[0m", 
+                    //wl3->accident_id, pkt->accident.direction, pkt->accident.lane);
+                /* --- 로그 출력 (ID, Lane, Sev, Time, Dir) --- */
+                /*DBG_INFO("\x1b[32m[PKT-TX] 내 사고 조립 완료 (ID: 0x%lX, Lane: %d, Sev: %d, Time: %lu, Dir: %d)\x1b[0m", 
+                    pkt->accident.accident_id, 
+                    pkt->accident.lane, 
+                    pkt->accident.severity, 
+                    pkt->accident.accident_time,
+                    pkt->accident.direction); // 방향 정보 추가
+                    */
+                /* --- [4] 로그 출력 (ID, Lane, Sev, Time, Dir) --- */
+                // memcpy로 데이터가 잘 들어왔는지 확인합니다.
+                DBG_INFO("\x1b[32m[PKT-TX] 내 사고 조립 완료 (ACC_ID: 0x%lX, Lane: %d, Sev: %d, Time: %lu, Dir: %d)\x1b[0m", 
+                    pkt->accident.accident_id, 
+                    pkt->accident.lane, 
+                    pkt->accident.severity, 
+                    pkt->accident.accident_time,
+                    pkt->accident.direction);
+
             }
                 free(wl3); // 사용이 끝난 WL-3 메모리 해제
         }

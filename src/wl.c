@@ -1,7 +1,7 @@
 #include "wl.h"
 #include "debug.h"
 #include "queue.h"
-#include "i2c_io.h"
+//#include "i2c_io.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -59,15 +59,16 @@ void *thread_rx(void *arg) {
     while (g_keep_running) {
         wl1_packet_t *pkt = malloc(sizeof(wl1_packet_t));
         if (recv(rx_ctx.sock, pkt, sizeof(wl1_packet_t), 0) > 0) {
-            printf("\n\033[1;32m[T1-RX] Packet Received!\033[0m\n" );
+            //printf("\n\033[1;32m[T1-RX] Packet Received!\033[0m\n");
+            DBG_INFO("\033[1;32m[RX] Packet Received!\033[0m");
             // 수신 성공 시 보안 모듈 큐에 넣기
             Q_push(&q_rx_sec_rx, pkt);
-            printf("pushing to q_rx_sec_rx.\n");
+            //printf("pushing to q_rx_sec_rx.\n");
             printf("\n");
             fflush(stdout);
         } else {
             free(pkt);
-            printf("\n\03WL-1 Packet receive failed\n\033");
+            DBG_ERR("\n\03WL-1 Packet receive failed\n\033");
         }
     }
     close(rx_ctx.sock);
@@ -90,7 +91,7 @@ void *thread_tx(void *arg) {
         if (!pkt) continue;
 
         if (WL_send_msg(ctx, pkt, sizeof(wl1_packet_t))) {
-            printf("\n\033[1;32m[T8-TX] WL-1 Broadcast Success! (ID: 0x%lX)\033[0m\n", 
+            DBG_INFO("\033[1;32m[TX] WL-1 Broadcast Success! (ID: 0x%lX)\033[0m", 
                    pkt->sender.sender_id);
 
                    fflush(stdout); // 로그가 밀리지 않고 즉시 출력
