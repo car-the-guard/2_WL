@@ -42,10 +42,10 @@ void *thread_sec_tx(void *arg) {
 
     while (g_keep_running) {
         
-        wl1_packet_t *msg = Q_pop(&q_pkt_sec_tx);
+        wl1_delayed_packet_t *msg = Q_pop(&q_pkt_sec_tx);
         if (msg == NULL) break; 
 
-        SEC_sign(msg); 
+        SEC_sign(&(msg->packet)); 
         
         Q_push(&q_sec_tx_wl_tx, msg); 
     }

@@ -49,7 +49,7 @@ void *sub_thread_pkt_tx(void *arg) {
     DBG_INFO("  - PKT-TX Sub-thread started (Dual-Path Aggregation).");
 
     while (g_keep_running) {
-        wl1_packet_t *pkt = NULL; // 매 루프마다 초기화
+        wl1_delayed_packet_t *pkt = NULL; // 매 루프마다 초기화
 
         // --- [경로 1] 내 사고 정보 (Yocto 직통 큐: 26B 규격) 우선 확인 ---
         // pop_nowait를 써야 데이터가 없어도 바로 다음(릴레이 큐)으로 넘어간다.
@@ -57,18 +57,18 @@ void *sub_thread_pkt_tx(void *arg) {
         
         if (wl3 != NULL) {
             // 내 사고라면 새 WL-1 구조체 할당 및 조립 시작
-            pkt = (wl1_packet_t *)malloc(sizeof(wl1_packet_t));
+            pkt = (wl1_delayed_packet_t *)malloc(sizeof(wl1_delayed_packet_t));
             if (pkt) {
                 memset(pkt, 0, sizeof(wl1_packet_t));
                 // Yocto(WL-3) 데이터를 무선 규격(WL-1)으로 맵핑
 
 
                 /* --- [1] HEADER 조립 --- */
-                pkt->header.version  = 0x01;
+                pkt->packet.header.version  = 0x01;
                 //pkt->header.msg_type = 0x03; // WL-3 기반 사고 알림 타입
-                pkt->header.msg_type = wl3->type; 
-                pkt->header.ttl      = 3;    // 최초 발생 패킷 TTL 설정
-                pkt->header.reserved = 0x00;
+                pkt->packet.header.msg_type = wl3->type; 
+                pkt->packet.header.ttl      = 3;    // 최초 발생 패킷 TTL 설정
+                pkt->packet.header.reserved = 0x00;
 
                 /*
                 //pkt->accident.type        = 0x03; 
@@ -94,12 +94,12 @@ void *sub_thread_pkt_tx(void *arg) {
                 //memcpy(&(pkt->accident.direction), (uint8_t *)wl3 + offset, 20);
 
 
-                memcpy(&(pkt->accident.direction), (uint8_t *)wl3 + 5, 20);
+                memcpy(&(pkt->packet.accident.direction), (uint8_t *)wl3 + 5, 20);
                 /* --- [3] 앞뒤 부족한 GPS 정보는 직접 참조(Reference)로 주입 --- */
                 // 위도/경도/고도는 WL-3에 없으므로 g_driving_status에서 직접 가져옵니다.
-                pkt->accident.lat_uDeg  = (int32_t)(g_driving_status.lat * 1000000.0);
-                pkt->accident.lon_uDeg  = (int32_t)(g_driving_status.lon * 1000000.0);
-                pkt->accident.alt_mm    = (int32_t)(g_driving_status.alt * 1000.0);
+                pkt->packet.accident.lat_uDeg  = (int32_t)(g_driving_status.lat * 1000000.0);
+                pkt->packet.accident.lon_uDeg  = (int32_t)(g_driving_status.lon * 1000000.0);
+                pkt->packet.accident.alt_mm    = (int32_t)(g_driving_status.alt * 1000.0);
 
                 // 사고 정보의 방향(Direction)을 WL-4에서 받은 최신 주행 방향으로 설정
                 // 내 차량이 사고가 난 것이므로, 현재 내 주행 방향이 사고 방향이다.
@@ -118,48 +118,52 @@ void *sub_thread_pkt_tx(void *arg) {
                     pkt->accident.accident_time,
                     pkt->accident.direction); // 방향 정보 추가
                     */
+
+                // 내 사고 정보라면 즉시 송신 목표 시간 설정
+                pkt->target_send_time_ms = get_now_ms();
+
                 /* --- [4] 로그 출력 (ID, Lane, Sev, Time, Dir) --- */
                 // memcpy로 데이터가 잘 들어왔는지 확인합니다.
                 DBG_INFO("\x1b[32m[PKT-TX] 내 사고 조립 완료 (ACC_ID: 0x%lX, Lane: %d, Sev: %d, Time: %lu, Dir: %d)\x1b[0m", 
-                    pkt->accident.accident_id, 
-                    pkt->accident.lane, 
-                    pkt->accident.severity, 
-                    pkt->accident.accident_time,
-                    pkt->accident.direction);
+                    pkt->packet.accident.accident_id, 
+                    pkt->packet.accident.lane, 
+                    pkt->packet.accident.severity, 
+                    pkt->packet.accident.accident_time,
+                    pkt->packet.accident.direction);
 
             }
-                free(wl3); // 사용이 끝난 WL-3 메모리 해제
+            free(wl3); // 사용이 끝난 WL-3 메모리 해제
         }
 // [2] 내 사고가 없다면 외부 릴레이(Relay) 큐 확인
         else {
             pkt = Q_pop_nowait(&q_val_pkt_tx);
-            if (pkt && pkt->header.ttl > 0) {
-                pkt->header.ttl -= 1; // 릴레이 시 TTL 차감
-            }
         }
+
+        // --- [공통] 조립 완료된 패킷이 있다면 SENDER 및 최종 큐 전달 ---
         // [3] SENDER 조립 (내 GPS 및 상태 정보 결합)
         if (pkt != NULL) {
-            if (pkt->header.ttl > 0) {
+            if (pkt->packet.header.ttl > 0) {
                 pthread_mutex_lock(&g_driving_status.lock);
                 
                 /* --- SENDER 조립 --- */
-                pkt->sender.sender_id = g_sender_id; 
+                pkt->packet.sender.sender_id = g_sender_id; 
                 
                 // 위도/경도/고도 주입
-                pkt->sender.lat_uDeg  = (int32_t)(g_driving_status.lat * 1000000.0);
-                pkt->sender.lon_uDeg  = (int32_t)(g_driving_status.lon * 1000000.0);
-                pkt->sender.alt_mm    = (int32_t)(g_driving_status.alt * 1000.0);
+                pkt->packet.sender.lat_uDeg  = (int32_t)(g_driving_status.lat * 1000000.0);
+                pkt->packet.sender.lon_uDeg  = (int32_t)(g_driving_status.lon * 1000000.0);
+                pkt->packet.sender.alt_mm    = (int32_t)(g_driving_status.alt * 1000.0);
                                 
 
                 // 타임스탬프
-                pkt->sender.send_time = get_current_timestamp_us();
+                pkt->packet.sender.send_time = get_current_timestamp_us();
                 
                 pthread_mutex_unlock(&g_driving_status.lock);
 
                 // [4] 최종 보안 서명 큐로 전달
                 Q_push(&q_pkt_sec_tx, pkt);
                 DBG_INFO("[PKT-TX] WL-1 전체 패킷 조립 완료 (SenderID: 0x%X, AccID: 0x%lX)", 
-          pkt->sender.sender_id, pkt->accident.accident_id);
+                    pkt->packet.sender.sender_id, 
+                    pkt->packet.accident.accident_id);
             } else {
                 free(pkt);
             }

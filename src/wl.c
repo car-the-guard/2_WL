@@ -87,12 +87,12 @@ void *thread_tx(void *arg) {
     
     while (g_keep_running) {
         // 보안 모듈 큐에서 빼고 송신
-        wl1_packet_t *pkt = (wl1_packet_t *)Q_pop(&q_sec_tx_wl_tx);
+        wl1_delayed_packet_t *pkt = (wl1_delayed_packet_t *)Q_pop(&q_sec_tx_wl_tx);
         if (!pkt) continue;
 
-        if (WL_send_msg(ctx, pkt, sizeof(wl1_packet_t))) {
+        if (WL_send_msg(ctx, &(pkt->packet), sizeof(wl1_packet_t))) {
             DBG_INFO("\033[1;32m[TX] WL-1 Broadcast Success! (ID: 0x%lX)\033[0m", 
-                   pkt->sender.sender_id);
+                   pkt->packet.sender.sender_id);
 
                    fflush(stdout); // 로그가 밀리지 않고 즉시 출력
             }

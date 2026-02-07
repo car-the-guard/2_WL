@@ -104,7 +104,7 @@ void *thread_val(void *arg) {
                     int mode = (dist_2d > 500.0) ? MODE_ALERT : MODE_RELAY;
                     uint16_t display_dist = (uint16_t)dist_2d;
 
-                    printf("\x1b[1;32m[VAL-WARN] 동일 방향 사고! LCD 출력 시도\x1b[0m\n");
+                    printf("\x1b[1;32m[VAL-WARN] 동일 방향 사고!\n");
                     //LCD_display_v2x_mode(mode, g_sender_id, rx->accident.accident_id, display_dist, rx->accident.lane, rx->accident.type);
 
                     // --- 사고 리스트 업데이트 ---
@@ -136,13 +136,15 @@ void *thread_val(void *arg) {
 
                 // --- 재전송(Relay) 로직 (방향 무관하게 수행) ---
                 if (rx->header.ttl > 0) {
-                    wl1_packet_t *relay = malloc(sizeof(wl1_packet_t));
+                    wl1_delayed_packet_t *relay = malloc(sizeof(wl1_delayed_packet_t));
                     if (relay) {
-                        memcpy(relay, rx, sizeof(wl1_packet_t));
-                        relay->header.ttl--;
-                        relay->sender.sender_id = g_sender_id;
+                        memcpy(&relay->packet, rx, sizeof(wl1_packet_t));
+                        relay->packet.header.ttl--;
+                        relay->packet.sender.sender_id = g_sender_id;
+                        // TODO: 거리 기반 + Jitter 시간 추가하기
+                        relay->target_send_time_ms = get_now_ms() + 100; // 100ms 후 송신 목표
                         Q_push(&q_val_pkt_tx, relay);
-                        printf("[RELAY-ACT] 사고 0x%lX 패킷 중계 큐 삽입\n", relay->accident.accident_id);
+                        printf("[RELAY-ACT] 사고 0x%lX 패킷 중계 큐 삽입\n", relay->packet.accident.accident_id);
                     }
                 }
             }
