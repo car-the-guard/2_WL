@@ -1,5 +1,6 @@
 #include "sec.h"
 #include "queue.h"
+#include "pqueue.h"
 #include "debug.h"
 #include <stdlib.h>
 #include <string.h>
@@ -7,8 +8,8 @@
 extern bool g_keep_running;
 
 
-extern queue_t q_pkt_sec_tx;   // 송신: T6(PKT) -> T7(SEC-TX)
-extern queue_t q_sec_tx_wl_tx; // 송신: T7(SEC-TX) -> T8(WL-TX)
+extern pqueue_t q_pkt_sec_tx;   // 송신: T6(PKT) -> T7(SEC-TX) (우선순위 큐)
+extern pqueue_t q_sec_tx_wl_tx; // 송신: T7(SEC-TX) -> T8(WL-TX) (우선순위 큐)
 
 
 extern queue_t q_rx_sec_rx;    // 수신: T1(WL-RX) -> T2(SEC-RX)
@@ -42,12 +43,12 @@ void *thread_sec_tx(void *arg) {
 
     while (g_keep_running) {
         
-        wl1_delayed_packet_t *msg = Q_pop(&q_pkt_sec_tx);
-        if (msg == NULL) break; 
+        wl1_delayed_packet_t *msg = PQ_pop(&q_pkt_sec_tx);
+        if (msg == NULL) break;
 
         SEC_sign(&(msg->packet)); 
         
-        Q_push(&q_sec_tx_wl_tx, msg); 
+        PQ_push(&q_sec_tx_wl_tx, msg);
     }
 
     DBG_INFO("Thread 7: Security TX Module terminating.");

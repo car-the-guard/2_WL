@@ -9,6 +9,8 @@
 
 #include "debug.h"
 #include "queue.h"
+#include "pqueue.h"
+#include "proto_wl1.h"
 #include "wl.h"
 #include "pkt.h"
 #include "sec.h"
@@ -63,13 +65,19 @@ queue_t q_rx_sec_rx;    // T1 -> T2
 queue_t q_sec_rx_pkt;   // T2 -> T3
 queue_t q_val_pkt_tx;   // T4 -> T6
 queue_t q_pkt_val;
-queue_t q_pkt_sec_tx;   // T6 -> T7
-queue_t q_sec_tx_wl_tx; // T7 -> T8
+pqueue_t q_pkt_sec_tx;   // T6 -> T7 (min-heap 우선순위 큐)
+pqueue_t q_sec_tx_wl_tx; // T7 -> T8 (min-heap 우선순위 큐)
 queue_t q_val_yocto;      // T4 -> T9
 queue_t q_yocto_to_driving; // T9 -> T5
 queue_t q_yocto_pkt_tx;
 queue_t q_wl_sec;
 queue_t q_yocto_if_to_pkt_tx; // [추가] T9 -> T6 (내 사고 직통용)
+// pqueue key 추출 함수: wl1_delayed_packet_t에서 target_send_time_ms 반환
+static uint32_t get_delayed_pkt_key(const void *data) {
+    const wl1_delayed_packet_t *pkt = data;
+    return pkt->target_send_time_ms;
+}
+
 // ==========================================
 // 2. 종료 및 초기화 로직
 // ==========================================
@@ -80,7 +88,7 @@ void signal_handler(int sig) {
     // 블로킹 상태의 큐들을 깨우기 위해 NULL 푸시
     Q_push(&q_rx_sec_rx, NULL); Q_push(&q_sec_rx_pkt, NULL);
     Q_push(&q_pkt_val, NULL); Q_push(&q_val_pkt_tx, NULL);
-    Q_push(&q_pkt_sec_tx, NULL); Q_push(&q_sec_tx_wl_tx, NULL);
+    PQ_wake_all(&q_pkt_sec_tx); PQ_wake_all(&q_sec_tx_wl_tx);
     Q_push(&q_val_yocto, NULL); Q_push(&q_yocto_to_driving, NULL);
     Q_push(&q_yocto_if_to_pkt_tx, NULL); // [추가] 신규 큐 종료 처리
     DBG_INFO("[MAIN] Shutdown signal received. Cleaning up...\n");
@@ -298,8 +306,8 @@ int main(int argc, char *argv[]) {
     Q_init(&q_rx_sec_rx);
     Q_init(&q_sec_rx_pkt);
     Q_init(&q_val_pkt_tx);
-    Q_init(&q_pkt_sec_tx);
-    Q_init(&q_sec_tx_wl_tx);
+    PQ_init(&q_pkt_sec_tx, PQ_DEFAULT_CAP, get_delayed_pkt_key);
+    PQ_init(&q_sec_tx_wl_tx, PQ_DEFAULT_CAP, get_delayed_pkt_key);
     Q_init(&q_val_yocto);
     Q_init(&q_yocto_to_driving);
     Q_init(&q_yocto_if_to_pkt_tx); 

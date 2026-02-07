@@ -1,6 +1,7 @@
 #include "wl.h"
 #include "debug.h"
 #include "queue.h"
+#include "pqueue.h"
 //#include "i2c_io.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -11,8 +12,8 @@
 #include <net/if.h>
 extern volatile bool g_keep_running;
 
-extern queue_t q_rx_sec_rx;      // RX 스레드가 수신 패킷을 넣는 큐
-extern queue_t q_sec_tx_wl_tx;   // TX 스레드가 송신할 패킷을 가져오는 큐
+extern queue_t q_rx_sec_rx;       // RX 스레드가 수신 패킷을 넣는 큐
+extern pqueue_t q_sec_tx_wl_tx;   // TX 스레드가 송신할 패킷을 가져오는 큐 (우선순위 큐)
 
  wl_ctx_t tx_ctx;
  wl_ctx_t rx_ctx;
@@ -86,8 +87,9 @@ void *thread_tx(void *arg) {
     wl_ctx_t *ctx = &tx_ctx; 
     
     while (g_keep_running) {
-        // 보안 모듈 큐에서 빼고 송신
-        wl1_delayed_packet_t *pkt = (wl1_delayed_packet_t *)Q_pop(&q_sec_tx_wl_tx);
+        // 우선순위 큐에서 target_send_time_ms 도래한 패킷만 꺼냄
+        wl1_delayed_packet_t *pkt = PQ_pop_wait_until_ready(
+            &q_sec_tx_wl_tx, &g_keep_running);
         if (!pkt) continue;
 
         if (WL_send_msg(ctx, &(pkt->packet), sizeof(wl1_packet_t))) {

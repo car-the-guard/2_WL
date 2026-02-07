@@ -142,7 +142,7 @@ void *thread_val(void *arg) {
                         relay->packet.header.ttl--;
                         relay->packet.sender.sender_id = g_sender_id;
                         // TODO: 거리 기반 + Jitter 시간 추가하기
-                        relay->target_send_time_ms = get_now_ms() + 100; // 100ms 후 송신 목표
+                        relay->target_send_time_ms = (uint32_t)(get_now_ms() + 100); // 100ms 후 송신 목표
                         Q_push(&q_val_pkt_tx, relay);
                         printf("[RELAY-ACT] 사고 0x%lX 패킷 중계 큐 삽입\n", relay->packet.accident.accident_id);
                     }

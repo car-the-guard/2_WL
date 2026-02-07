@@ -10,6 +10,7 @@
 
 #include "pkt.h"
 #include "queue.h"
+#include "pqueue.h"
 #include "debug.h"
 #include "val.h"
 #include "val_msg.h"
@@ -25,7 +26,7 @@ extern queue_t q_pkt_val;       // RX 패킷 -> VAL 모듈 전달용
 extern queue_t q_sec_rx_pkt;    // 보안 검증 완료된 수신 패킷 큐
 extern queue_t q_val_pkt_tx;    // VAL 모듈로부터 온 재전파 요청 큐(외부사고 릴레이용)
 extern queue_t q_yocto_if_to_pkt_tx;   // 내 사고(Yocto) 직통용
-extern queue_t q_pkt_sec_tx;    // 조립 완료된 패킷 -> 보안 서명 큐
+extern pqueue_t q_pkt_sec_tx;   // 조립 완료된 패킷 -> 보안 서명 큐 (우선순위 큐)
 extern volatile bool g_keep_running;
 extern uint32_t g_sender_id;
 extern driving_status_t g_driving_status;
@@ -120,7 +121,7 @@ void *sub_thread_pkt_tx(void *arg) {
                     */
 
                 // 내 사고 정보라면 즉시 송신 목표 시간 설정
-                pkt->target_send_time_ms = get_now_ms();
+                pkt->target_send_time_ms = (uint32_t)get_current_timestamp_ms();
 
                 /* --- [4] 로그 출력 (ID, Lane, Sev, Time, Dir) --- */
                 // memcpy로 데이터가 잘 들어왔는지 확인합니다.
@@ -160,7 +161,7 @@ void *sub_thread_pkt_tx(void *arg) {
                 pthread_mutex_unlock(&g_driving_status.lock);
 
                 // [4] 최종 보안 서명 큐로 전달
-                Q_push(&q_pkt_sec_tx, pkt);
+                PQ_push(&q_pkt_sec_tx, pkt);
                 DBG_INFO("[PKT-TX] WL-1 전체 패킷 조립 완료 (SenderID: 0x%X, AccID: 0x%lX)", 
                     pkt->packet.sender.sender_id, 
                     pkt->packet.accident.accident_id);
