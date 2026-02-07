@@ -25,6 +25,9 @@
 #define PKT_STX 0xFD
 #define PKT_ETX 0xFE
 
+// main_vT11.c 상단
+extern int g_uart_fd; // yocto_if.c에서 실제 open한 fd
+
 // 외부 파일(pkt.c, sec.c, wl.c 등)에서 정의된 스레드 함수들 선언
 extern void *thread_rx(void *arg);       // T1
 extern void *thread_sec_rx(void *arg);   // T2
@@ -203,7 +206,7 @@ void *final_test_thread_wUART(void *arg) {
     // 물리적 UART 드라이버에 쓰기
     ssize_t sent = write(uart_fd, &test_wl3, sizeof(wl3_packet_t));
     // 사고 전송 후에는 2~3초 정도 쉬면서 수신 보드의 타임아웃(5초)을 방어
-            //sleep(2);
+            sleep(1);
             
     if (sent > 0) {
         DBG_INFO("[UART-TX] Success: WL-3 sent via HW (%ld bytes) at %ld.%06ld\n", 
@@ -214,7 +217,7 @@ void *final_test_thread_wUART(void *arg) {
     }
     
 
-    sleep(2); 
+    sleep(3); 
     }
     return NULL;
 }
@@ -275,13 +278,14 @@ int main(int argc, char *argv[]) {
     //}
     
     // 3. UART 장치 오픈 및 설정
-    int uart_fd = open("/dev/ttyAMA1", O_RDWR | O_NOCTTY | O_NDELAY);
-    if (uart_fd < 0) {
-        perror("[MAIN] Failed to open /dev/ttyAMA1");
-    } else {
+    //int uart_fd = open("/dev/ttyAMA1", O_RDWR | O_NOCTTY | O_NDELAY);
+    //if (uart_fd < 0) {
+    //    perror("[MAIN] Failed to open /dev/ttyAMA1");
+    //} else {
         // [참고] UART 속도를 9600으로 설정하는 루틴 (필요시 추가)
         struct termios options;
-        tcgetattr(uart_fd, &options);
+        //tcgetattr(uart_fd, &options);
+        tcgetattr(g_uart_fd, &options);
         cfsetispeed(&options, B9600);
         cfsetospeed(&options, B9600);
         options.c_cflag |= (CLOCAL | CREAD);
@@ -289,10 +293,11 @@ int main(int argc, char *argv[]) {
         options.c_cflag &= ~CSTOPB; // 1 stop bit
         options.c_cflag &= ~CSIZE;
         options.c_cflag |= CS8;     // 8 bits
-        tcsetattr(uart_fd, TCSANOW, &options);
-
-        DBG_INFO("[MAIN] /dev/ttyAMA1 opened and configured (fd: %d)\n", uart_fd);
-    }
+        //tcsetattr(uart_fd, TCSANOW, &options);
+        tcsetattr(g_uart_fd, TCSANOW, &options);
+        //DBG_INFO("[MAIN] /dev/ttyAMA1 opened and configured (fd: %d)\n", uart_fd);
+        DBG_INFO("[MAIN] /dev/ttyAMA1 opened and configured (fd: %d)\n", g_uart_fd);
+    //}
 
 
 
@@ -301,7 +306,8 @@ int main(int argc, char *argv[]) {
     pthread_t final_test_tid;
     if (g_sender_id == 0x1111) {
         static int passing_fd; 
-        passing_fd = uart_fd;
+        //passing_fd = uart_fd;
+        passing_fd = g_uart_fd;
         // 세 번째 인자는 함수 이름, 첫 번째 인자는 스레드 ID 저장 변수
         if (pthread_create(&final_test_tid, NULL, final_test_thread_wUART, &passing_fd) != 0) {
             perror("[MAIN] Failed to create test thread");

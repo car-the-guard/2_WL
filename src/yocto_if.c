@@ -29,12 +29,16 @@
 #define PKT_STX 0xFD
 #define PKT_ETX 0xFE
 
-// 차1은 송신이라 디스플레이 포트 번호랑 필요한 변수 include 선언 안함
+// 차1은 송신이라 디스플레이 연결X. 디스플레이 포트 번호랑 필요한 변수 include 선언 안함
 
 extern queue_t q_wl_sec;     // 수신 파이프라인 시작점
 extern queue_t q_yocto_pkt_tx; // 송신 파이프라인 시작점
 
 extern driving_status_t g_driving_status;
+
+// [중요] 다른 스레드(테스트 스레드)에서 이 fd를 쓸 수 있도록 전역 선언하거나 공유해야 함
+int g_uart_fd = -1;
+
 
 extern queue_t q_val_pkt_tx, q_val_yocto, q_rx_sec_rx;
 extern volatile bool g_keep_running;
@@ -63,7 +67,8 @@ static void wait_next_period(struct timespec *next, long ms) {
 
 // UART1 초기화 함수: 포트 설정(9600bps, 8N1, Raw Mode)
 int UART1_init(void) {
-    int fd = open(UART1_DEV, O_RDWR | O_NOCTTY | O_NDELAY);
+    // O_NONBLOCK을 추가하여 데이터가 없어도 스레드가 멈추지 않게 함
+    int fd = open(UART1_DEV, O_RDWR | O_NOCTTY | O_NONBLOCK);
     if (fd < 0) return -1;
 
     struct termios opt;
@@ -90,11 +95,16 @@ void* thread_yocto_if(void* arg) {
     (void)arg;
     
     // 1. UART1 포트 오픈
-    int uart_fd = UART1_init();
-    if (uart_fd < 0) {
-        DBG_ERR("[T9] UART1 (/dev/ttyAMA1) Open Failed!");
+    //int uart_fd = UART1_init();
+    g_uart_fd = UART1_init(); // 전역 변수에 저장
+    if (g_uart_fd < 0) {
+        DBG_ERR("[T9] UART1 Open Failed!");
         return NULL;
     }
+    /*if (uart_fd < 0) {
+        DBG_ERR("[T9] UART1 (/dev/ttyAMA1) Open Failed!");
+        return NULL;
+    }*/
 
     // 2. 정밀 시간 설정을 위한 구조체
     struct timespec next_time;
@@ -111,33 +121,15 @@ void* thread_yocto_if(void* arg) {
         // 50ms 정밀 주기 제어 (WL-2, WL-3을 위해 빠르게 회전)
         wait_next_period(&next_time, PERIOD_YOCTO_MS);
 
-        // --- [A] 송신: VAL에서 온 가장 가까운 사고 정보(WL-2)를 Yocto로 전송 ---
-        // 10바이트 규격(16비트 거리 포함)으로 조립된 WL-2 패킷을 꺼냅니다.
-        wl2_packet_t *wl2 = (wl2_packet_t *)Q_pop_nowait(&q_val_yocto);
-        if (wl2) {
-            // 정수형으로 통일된 10바이트 구조체를 UART로 송신합니다.
-            int expected_len = sizeof(wl2_packet_t); // 10바이트
-            int tx_res = write(uart_fd, wl2, sizeof(wl2_packet_t));
-            // [수정] 0보다 큰 것뿐만 아니라, 전체 길이가 다 나갔는지 확인
-            if (tx_res == expected_len) {
-                // 성공: 10바이트 완벽 전송
-                // DBG_INFO("[T9-TX] WL-2 Full Sent (%d bytes)", tx_res);
-            } else if (tx_res > 0) {
-                // 일부 전송됨 (데이터 유실 가능성)
-                DBG_WARN("[T9-TX] WL-2 Partial Write: %d / %d bytes", tx_res, expected_len);
-            } else {
-                // 전송 실패 (포트 오류 등)
-                perror("[T9-TX] UART Write Error");
-            }
-            free(wl2);
-            wl2 = NULL;
-        }
+        
         //uint8_t rx_buf[256] = {0};
         //int rx_len = read(uart_fd, rx_buf, sizeof(rx_buf)); // <-- read 호출이 여기 있어야 함
 
         // --- [B] 수신: Yocto로부터 데이터 읽기 (WL-3, WL-4) ---
         uint8_t rx_buf[512] = {0};
-        int rx_len = read(uart_fd, rx_buf, sizeof(rx_buf));
+        //int rx_len = read(uart_fd, rx_buf, sizeof(rx_buf));
+        int rx_len = read(g_uart_fd, rx_buf, sizeof(rx_buf));
+
 
         if (rx_len > 0) {
         //uint8_t type = rx_buf[0];
@@ -199,7 +191,8 @@ void* thread_yocto_if(void* arg) {
         } // if rx_len 끝
     } // while loop 끝
 
-    close(uart_fd);
+    //close(uart_fd);
+    close(g_uart_fd);
     return NULL;
 }
     
@@ -287,3 +280,26 @@ void* thread_yocto_if(void* arg) {
 }
 }
 */
+
+
+// --- [A] 송신: VAL에서 온 가장 가까운 사고 정보(WL-2)를 Yocto로 전송 ---
+        // 10바이트 규격(16비트 거리 포함)으로 조립된 WL-2 패킷을 꺼냅니다.
+        /*wl2_packet_t *wl2 = (wl2_packet_t *)Q_pop_nowait(&q_val_yocto);
+        if (wl2) {
+            // 정수형으로 통일된 10바이트 구조체를 UART로 송신합니다.
+            int expected_len = sizeof(wl2_packet_t); // 10바이트
+            int tx_res = write(uart_fd, wl2, sizeof(wl2_packet_t));
+            // [수정] 0보다 큰 것뿐만 아니라, 전체 길이가 다 나갔는지 확인
+            if (tx_res == expected_len) {
+                // 성공: 10바이트 완벽 전송
+                // DBG_INFO("[T9-TX] WL-2 Full Sent (%d bytes)", tx_res);
+            } else if (tx_res > 0) {
+                // 일부 전송됨 (데이터 유실 가능성)
+                DBG_WARN("[T9-TX] WL-2 Partial Write: %d / %d bytes", tx_res, expected_len);
+            } else {
+                // 전송 실패 (포트 오류 등)
+                perror("[T9-TX] UART Write Error");
+            }
+            free(wl2);
+            wl2 = NULL;
+        }*/

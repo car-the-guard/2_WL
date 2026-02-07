@@ -23,6 +23,9 @@
 #define TIMEOUT_SEC   5        // // 5초간 수신 없으면 리스트에서 삭제
 #define HEADING_LIMIT 45       // 45도 이내 차이만 동일 방향으로 간주
 
+#define MODE_TX    0  // 내 사고 송신
+#define MODE_RELAY 1  // 타인 사고 재전송
+#define MODE_ALERT 2  // 위험 경고 (LN, TYPE, DIST 표시)
 
 #define HOST_NOTIFY_PORT 38474
 #define TRIGGER_BINARY_SIZE 6  /* 거리32 + 방향8 + 위험8 (trigger_send_binary 호환) */
@@ -189,12 +192,12 @@ void *thread_val(void *arg) {
             last_report_ms = now;
 
 
-              // [2차 추가] 1. 내 현재 위치 스냅샷
+            // [2차 추가] 1. 내 현재 위치 스냅샷
             pthread_mutex_lock(&g_driving_status.lock);
             double cur_lat = g_driving_status.lat;
             double cur_lon = g_driving_status.lon;
             pthread_mutex_unlock(&g_driving_status.lock);
-            
+
             int best_idx = -1;
             double min_dist = 999999.0;
 
@@ -206,13 +209,30 @@ void *thread_val(void *arg) {
                     accident_list[i].is_active = false;
                     continue;
                 }
+
+                double target_lat = (double)accident_list[i].data.accident.lat_uDeg / 1000000.0;
+                double target_lon = (double)accident_list[i].data.accident.lon_uDeg / 1000000.0;
+
+                // 내 최신 위치(cur_lat, cur_lon) 기준으로 거리 업데이트
+                double updated_dist = calc_dist(cur_lat, cur_lon, target_lat, target_lon);
                 
+                // 리스트 데이터 갱신 (트래킹 반영)
+                accident_list[i].data.analysis.dist_3d = updated_dist;
+                accident_list[i].data.analysis.is_danger = (updated_dist < 100.0);
+                
+                        // 갱신된 거리로 최단 거리 사고 선별
+                if (updated_dist < min_dist) {
+                    min_dist = updated_dist;
+                    best_idx = i;
+                    }
+                } // for 루프 끝
                 //if (accident_list[i].data.analysis.dist_3d < min_dist) {
                     //min_dist = accident_list[i].data.analysis.dist_3d;
                     //best_idx = i;
                 //}
-            }
-            // --- [수정 포인트] 실시간 거리 재계산 로직 추가 ---
+            //}
+            
+            /*// --- [수정 포인트] 실시간 거리 재계산 로직 추가 ---
         // 리스트에 저장된 사고의 고정 좌표 추출
         double target_lat = (double)accident_list[i].data.accident.lat_uDeg / 1000000.0;
         double target_lon = (double)accident_list[i].data.accident.lon_uDeg / 1000000.0;
@@ -224,13 +244,13 @@ void *thread_val(void *arg) {
         accident_list[i].data.analysis.dist_3d = updated_dist;
         accident_list[i].data.analysis.is_danger = (updated_dist < 100.0);
         // ----------------------------------------------
-
+        */
         // 갱신된 거리로 최단 거리 사고 선별
-        if (updated_dist < min_dist) {
+        /*if (updated_dist < min_dist) {
             min_dist = updated_dist;
             best_idx = i;
             }
-        }
+        }*/
 
             //}
 
@@ -247,7 +267,7 @@ void *thread_val(void *arg) {
             if (best_idx != -1) {
                 wl2_packet_t *wl2 = malloc(sizeof(wl2_packet_t));
                 memset(wl2, 0, sizeof(wl2_packet_t));
-
+                
                 // --- Header 설정 ---
                 wl2->stx = 0xFD;
                 wl2->type = 0x02; // WL-2
@@ -261,12 +281,29 @@ void *thread_val(void *arg) {
         
                 // --- Trailer 설정 ---
                 wl2->etx = 0xFE;
-
+                
+                
+                //wl2->dist_rsv = (uint16_t)((uint16_t)min_dist << 4);
+                //wl2->lane = accident_list[best_idx].data.accident.lane;
+                //wl2->sev_rsv = (accident_list[best_idx].data.analysis.is_danger ? 0x10 : 0x00);
+                
                 Q_push(&q_val_yocto, wl2);
-                //DBG_INFO("VAL: Reporting Nearest -> ID: 0x%lX, Dist: %.1fm", 
-                  //       accident_list[best_idx].data.accident.accident_id, min_dist);
-                  DBG_INFO("VAL: Reporting Nearest -> ID: 0x%lX, Dist: %u m", 
-                 accident_list[best_idx].data.accident.accident_id, wl2->distance);
+                printf("[VAL] WL-2 보고 -> ID: 0x%lX, Dist: %.1fm\n",
+                       (unsigned long)accident_list[best_idx].data.accident.accident_id, min_dist);
+                DBG_INFO("VAL: Reporting Nearest -> ID: 0x%lX, Dist: %.1fm",
+                         accident_list[best_idx].data.accident.accident_id, min_dist);
+                /* 38474 포트로 바이너리 전송 (방향 L/F/R, 거리, 위험도 1~3) */
+                {
+                    uint8_t lane = accident_list[best_idx].data.accident.lane;
+                    uint8_t dir = (lane == 1) ? 'L' : (lane == 2) ? 'F' : (lane == 3) ? 'R' : (uint8_t)'F';
+                    uint8_t danger = accident_list[best_idx].data.analysis.is_danger ? 3 : 1;
+                    uint32_t dist_be = htonl((uint32_t)(uint16_t)min_dist);
+                    unsigned char bin[TRIGGER_BINARY_SIZE];
+                    memcpy(bin, &dist_be, 4);
+                    bin[4] = dir;
+                    bin[5] = danger;
+                    send_binary_to_host(bin, TRIGGER_BINARY_SIZE);
+                }
             }
         }
         usleep(10000); 
