@@ -6,7 +6,6 @@
 #include <stdbool.h>
 extern bool g_keep_running;
 
-
 extern queue_t q_pkt_sec_tx;   // 송신: T6(PKT) -> T7(SEC-TX)
 extern queue_t q_sec_tx_wl_tx; // 송신: T7(SEC-TX) -> T8(WL-TX)
 

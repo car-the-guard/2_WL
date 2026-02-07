@@ -16,7 +16,7 @@
 #include "val.h"
 #include "yocto_if.h" // T9 인터페이스 모듈
 #include "driving_mgr.h"
-#include "i2c_io.h"
+//#include "i2c_io.h"
 
 #include <fcntl.h>    // open, O_RDWR 등을 위해 필요
 #include <termios.h>  // UART 속도(Baudrate) 설정을 위해 권장
@@ -25,6 +25,9 @@
 #define PKT_STX 0xFD
 #define PKT_ETX 0xFE
 
+// main_vT11.c 상단
+extern int g_uart_fd; // yocto_if.c에서 실제 open한 fd
+
 // 외부 파일(pkt.c, sec.c, wl.c 등)에서 정의된 스레드 함수들 선언
 extern void *thread_rx(void *arg);       // T1
 extern void *thread_sec_rx(void *arg);   // T2
@@ -32,6 +35,7 @@ extern void *thread_sec_rx(void *arg);   // T2
 extern void *thread_val(void *arg);      // T4
 extern void *sub_thread_pkt_tx(void *arg);   // T6: 이 선언이 없어서 에러가 났습니다.
 extern void *sub_thread_pkt_rx(void *arg);   // T6: 이 선언이 없어서 에러가 났습니다.
+
 extern void *thread_sec_tx(void *arg);   // T7
 extern void *thread_yocto_if(void *arg);
 extern void *thread_driving_manager(void *arg);
@@ -52,12 +56,7 @@ driving_status_t g_driving_status = {
     .lat = 0.0, .lon = 0.0, .alt = 0, .heading = 0
 };
 
-/*// 파이프라인 큐 (vT11 흐름)
-queue_t q_rx_sec, q_sec_pkt, q_pkt_val;      // RX 라인
-queue_t q_val_pkt, q_pkt_sec, q_sec_tx;      // TX 라인
-queue_t q_val_yocto;                         // T4 -> T9 (WL-2 송신)
-queue_t q_yocto_to_driving;                  // T9 -> T5 (WL-4 전달)
-*/
+
 // [해결 2] 큐 이름 통일: 각 .c 파일들이 extern으로 기대하는 이름들
 queue_t q_rx_sec_rx;    // T1 -> T2
 queue_t q_sec_rx_pkt;   // T2 -> T3
@@ -83,6 +82,7 @@ void signal_handler(int sig) {
     Q_push(&q_pkt_sec_tx, NULL); Q_push(&q_sec_tx_wl_tx, NULL);
     Q_push(&q_val_yocto, NULL); Q_push(&q_yocto_to_driving, NULL);
     Q_push(&q_yocto_if_to_pkt_tx, NULL); // [추가] 신규 큐 종료 처리
+    
     DBG_INFO("[MAIN] Shutdown signal received. Cleaning up...\n");
 }
 
@@ -93,75 +93,12 @@ static uint64_t get_current_timestamp_ms() {
     return (uint64_t)tv.tv_sec * 1000 + tv.tv_usec / 1000;
 }
 
-/*
-void *final_test_thread(void *arg) {
-    sleep(3);
-    if (g_sender_id != 0x1111) return NULL;
 
-    int mock_heading = 0;
-    double accident_point = 37.5690;
-    // 15초 주행을 위해 시작 지점을 사고 지점 165m 전(0.0015도 전)으로 설정
-    double start_lat = 37.5675; 
-    bool arrived = false;
 
-    // 초기 위치 설정
-    pthread_mutex_lock(&g_driving_status.lock);
-    g_driving_status.lat = start_lat;
-    pthread_mutex_unlock(&g_driving_status.lock);
-
-    //printf("[TEST-차1] 15초 주행 시뮬레이션 시작 (목표: 37.5690)\n");
-
-    while (g_keep_running) {
-        pthread_mutex_lock(&g_driving_status.lock);
-        // 1. 매초 위도를 0.0001도(약 11m)씩 증가시켜 주행 시뮬레이션
-        if (!arrived) {
-            g_driving_status.lat += 0.0001;
-        }
-        double now_lat = g_driving_status.lat;
-        pthread_mutex_unlock(&g_driving_status.lock);
-
-        // 2. 사고 지점에 도착했는지 체크
-        if (!arrived && now_lat >= accident_point) {
-            arrived = true;
-            //printf("\n[TEST-차1] ★사고 발생!★ (지점: %f)\n", now_lat);
-        }
-
-        // 3. 주행 데이터(WL-4) 주입 - 매초 쏴서 디스플레이 업데이트 유지
-        wl4_packet_t *test_wl4 = malloc(sizeof(wl4_packet_t));
-        if (test_wl4) {
-            memset(test_wl4, 0, sizeof(wl4_packet_t));
-            ((uint8_t *)test_wl4)[0] = 0x04;
-            wl4_set_direction(test_wl4, mock_heading);
-            Q_push(&q_val_yocto, test_wl4);
-        }
-
-        // 4. 사고 지점 도달 이후에는 사고 데이터(WL-3) 주입
-        if (arrived) {
-            wl3_packet_t *test_wl3 = malloc(sizeof(wl3_packet_t));
-            if (test_wl3) {
-                memset(test_wl3, 0, sizeof(wl3_packet_t));
-                ((uint8_t *)test_wl3)[0] = 0x03;
-                test_wl3->accident_type = 3;  // wl-3 패킷
-                test_wl3->lane = 2;
-                // accident_id가 있다면 고유값 부여
-                test_wl3->accident_id = 0x1234567812345678ULL; 
-                //Q_push(&q_val_yocto, test_wl3);
-                Q_push(&q_yocto_if_to_pkt_tx, test_wl3);
-                
-                
-                //printf("[TEST-차1] 사고 패킷 송신 중 (%f)\n", now_lat);
-            }
-        }
-
-        // 주기를 1초로 줄여야 주행과 사고 전환이 매끄럽게 보입니다.
-        sleep(1); 
-    }
-    return NULL;
-}
-*/
 void *final_test_thread_wUART(void *arg) {
     // 메인에서 open한 /dev/ttyAMA1의 fd를 인자로 받습니다.
-    int uart_fd = *((int *)arg); 
+    //int uart_fd = *((int *)arg); 
+    int g_uart_fd = *((int *)arg); 
     int wl4_counter = 0; // 카운터 추가
     sleep(3);
 
@@ -222,7 +159,9 @@ void *final_test_thread_wUART(void *arg) {
             wl4_set_direction(&wl4_pkt, 43); // 테스트용 방향
             wl4_pkt.etx = 0xFE;          // PKT_ETX
             // 3. 전송
-            write(uart_fd, &wl4_pkt, sizeof(wl4_packet_t));
+            //g_uart_fd
+            //write(uart_fd, &wl4_pkt, sizeof(wl4_packet_t));
+            write(g_uart_fd, &wl4_pkt, sizeof(wl4_packet_t));
             
             // [추가] 내가 보낸 6바이트가 메모리에 어떻게 생겼나 찍어보기
             // HEX 로그 확인용
@@ -268,9 +207,12 @@ void *final_test_thread_wUART(void *arg) {
     clock_gettime(CLOCK_MONOTONIC, &tx_time);
 
     // 물리적 UART 드라이버에 쓰기
-    ssize_t sent = write(uart_fd, &test_wl3, sizeof(wl3_packet_t));
+    //ssize_t sent = write(uart_fd, &test_wl3, sizeof(wl3_packet_t));
+    ssize_t sent = write(g_uart_fd, &test_wl3, sizeof(wl3_packet_t));
+    
+
     // 사고 전송 후에는 2~3초 정도 쉬면서 수신 보드의 타임아웃(5초)을 방어
-            //sleep(2);
+            sleep(1);
             
     if (sent > 0) {
         DBG_INFO("[UART-TX] Success: WL-3 sent via HW (%ld bytes) at %ld.%06ld\n", 
@@ -281,7 +223,7 @@ void *final_test_thread_wUART(void *arg) {
     }
     
 
-    sleep(2); 
+    sleep(3); 
     }
     return NULL;
 }
@@ -309,7 +251,6 @@ int main(int argc, char *argv[]) {
     GPS_init();
     
     
-
     printf("--- Integrated V2X System Start ---\n");
 
     // 2. 스레드 생성
@@ -343,13 +284,14 @@ int main(int argc, char *argv[]) {
     //}
     
     // 3. UART 장치 오픈 및 설정
-    int uart_fd = open("/dev/ttyAMA1", O_RDWR | O_NOCTTY | O_NDELAY);
-    if (uart_fd < 0) {
-        perror("[MAIN] Failed to open /dev/ttyAMA1");
-    } else {
-        // [참고] UART 속도를 115200으로 설정하는 루틴 (필요시 추가)
+    //int uart_fd = open("/dev/ttyAMA1", O_RDWR | O_NOCTTY | O_NDELAY);
+    //if (uart_fd < 0) {
+    //    perror("[MAIN] Failed to open /dev/ttyAMA1");
+    //} else {
+        // [참고] UART 속도를 9600으로 설정하는 루틴 (필요시 추가)
         struct termios options;
-        tcgetattr(uart_fd, &options);
+        //tcgetattr(uart_fd, &options);
+        tcgetattr(g_uart_fd, &options);
         cfsetispeed(&options, B9600);
         cfsetospeed(&options, B9600);
         options.c_cflag |= (CLOCAL | CREAD);
@@ -357,10 +299,11 @@ int main(int argc, char *argv[]) {
         options.c_cflag &= ~CSTOPB; // 1 stop bit
         options.c_cflag &= ~CSIZE;
         options.c_cflag |= CS8;     // 8 bits
-        tcsetattr(uart_fd, TCSANOW, &options);
-
-        printf("[MAIN] /dev/ttyAMA1 opened and configured (fd: %d)\n", uart_fd);
-    }
+        //tcsetattr(uart_fd, TCSANOW, &options);
+        tcsetattr(g_uart_fd, TCSANOW, &options);
+        //DBG_INFO("[MAIN] /dev/ttyAMA1 opened and configured (fd: %d)\n", uart_fd);
+        DBG_INFO("[MAIN] /dev/ttyAMA1 opened and configured (fd: %d)\n", g_uart_fd);
+    //}
 
 
 
@@ -369,7 +312,8 @@ int main(int argc, char *argv[]) {
     pthread_t final_test_tid;
     if (g_sender_id == 0x1111) {
         static int passing_fd; 
-        passing_fd = uart_fd;
+        //passing_fd = uart_fd;
+        passing_fd = g_uart_fd;
         // 세 번째 인자는 함수 이름, 첫 번째 인자는 스레드 ID 저장 변수
         if (pthread_create(&final_test_tid, NULL, final_test_thread_wUART, &passing_fd) != 0) {
             perror("[MAIN] Failed to create test thread");

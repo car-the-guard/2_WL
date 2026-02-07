@@ -4,7 +4,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include "proto_wl1.h" // wl1_packet_t 정의 포함
-
+#pragma pack(push, 1) // [추가] 1바이트 단위 정렬 강제
 // RPi 분석 데이터
 typedef struct {
     double   dist_3d;           // 3D 거리
@@ -17,5 +17,6 @@ typedef struct {
     wl1_accident_t  accident;   // 원본 사고 정보
     analysis_data_t analysis;   // 분석 결과
 } wl2_data_t;
+#pragma pack(pop) // [추가]
 
 #endif

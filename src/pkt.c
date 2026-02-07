@@ -14,6 +14,7 @@
 #include "val.h"
 #include "val_msg.h"
 #include "proto_wl1.h"
+#include "proto_wl2.h"
 #include "proto_wl3.h"
 #include "driving_mgr.h"
 
@@ -21,6 +22,7 @@
 #define PKT_STX 0xFD
 #define PKT_ETX 0xFE
 
+extern queue_t q_rx_sec_rx;     // 필터 통과 → 보안 모듈
 extern queue_t q_pkt_val;       // RX 패킷 -> VAL 모듈 전달용
 extern queue_t q_sec_rx_pkt;    // 보안 검증 완료된 수신 패킷 큐
 extern queue_t q_val_pkt_tx;    // VAL 모듈로부터 온 재전파 요청 큐(외부사고 릴레이용)
@@ -159,7 +161,7 @@ void *sub_thread_pkt_tx(void *arg) {
                 // [4] 최종 보안 서명 큐로 전달
                 Q_push(&q_pkt_sec_tx, pkt);
                 DBG_INFO("[PKT-TX] WL-1 전체 패킷 조립 완료 (SenderID: 0x%X, AccID: 0x%lX)", 
-          pkt->sender.sender_id, pkt->accident.accident_id);
+                pkt->sender.sender_id, pkt->accident.accident_id);
             } else {
                 free(pkt);
             }
@@ -200,9 +202,8 @@ void *sub_thread_pkt_rx(void *arg) {
             }
             // [4] 판단 모듈(VAL, T4)로 전달하여 1km 필터링 및 사고 관리 수행
             
-        
-        
         }
+        //free(rx_pkt);
     }
     return NULL;
 }
@@ -225,8 +226,4 @@ void *thread_pkt(void *arg) {
     DBG_INFO("Thread 2: Packet Management Module terminating.");
     return NULL;
 }
-
-
-
-
 

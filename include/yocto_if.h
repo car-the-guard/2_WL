@@ -3,15 +3,14 @@
 
 #include <stdint.h>
 #include <stdbool.h>
-#include "proto_wl4.h"
+//#include "proto_wl4.h"
 
 // UART 설정
 #include <fcntl.h>    // open()
 #include <termios.h>  // UART 설정을 위한 termios 구조체
 #include <unistd.h>   // read(), write(), close()
 
-// 시뮬레이션 모드 활성화 (하드웨어 연결 시 주석 처리)
-// #define SIMULATION 
+
 
 // 통신 설정
 // UART 장치 경로

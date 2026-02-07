@@ -8,7 +8,7 @@
 extern volatile bool g_keep_running;
 extern driving_status_t g_driving_status;
 
-
+//[차1]
 extern double g_accident_point = 37.5690;
 
 // [1] GPS 초기화 함수 구현

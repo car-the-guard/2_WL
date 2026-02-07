@@ -10,7 +10,7 @@
 extern volatile bool g_keep_running;
 extern queue_t q_yocto_to_driving;
 extern driving_status_t g_driving_status;
-
+extern uint32_t g_sender_id;
 
 void *thread_driving_manager(void *arg) {
     (void)arg;
