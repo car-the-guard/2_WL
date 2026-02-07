@@ -148,3 +148,34 @@ void PQ_wake_all(pqueue_t *pq) {
     pthread_cond_broadcast(&pq->cond);
     pthread_mutex_unlock(&pq->mutex);
 }
+
+int PQ_remove_if(pqueue_t *pq,
+                 bool (*match)(const void *data, const void *ctx),
+                 const void *ctx) {
+    pthread_mutex_lock(&pq->mutex);
+    int removed = 0;
+    int write = 0;
+
+    // pq의 element 들을 쭉 확인해보면서 만약 match 조건이 TRUE가 된다면 제거
+    for (int read = 0; read < pq->size; read++) {
+        if (match(pq->heap[read], ctx)) {
+            free(pq->heap[read]);
+            removed++;
+        } else {
+            pq->heap[write++] = pq->heap[read];
+        }
+    }
+    pq->size = write;
+    // 힙 재구축
+    for (int i = pq->size / 2 - 1; i >= 0; i--) {
+        bubble_down(pq, i);
+    }
+
+    // 제거된 element가 있다면 대기중인 스레드들을 깨움 (최신화 반영)
+    if (removed > 0) {
+        pthread_cond_broadcast(&pq->cond);
+    }
+
+    pthread_mutex_unlock(&pq->mutex);
+    return removed;
+}

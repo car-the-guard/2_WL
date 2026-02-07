@@ -32,4 +32,9 @@ void *PQ_pop(pqueue_t *pq);                                          // 블로�
 void *PQ_pop_wait_until_ready(pqueue_t *pq, volatile bool *keep_running); // 블로킹: 시간 도래까지 대기
 void  PQ_wake_all(pqueue_t *pq);
 
+// 콜백 매칭 함수로 힙에서 조건에 맞는 element 제거. 제거된 개수 반환.
+int   PQ_remove_if(pqueue_t *pq,
+                   bool (*match)(const void *data, const void *ctx),
+                   const void *ctx);
+
 #endif

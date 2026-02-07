@@ -7,6 +7,7 @@
 
 #include "val.h"
 #include "queue.h"
+#include "pqueue.h"
 #include "debug.h"
 #include "val_msg.h"
 #include "driving_mgr.h"
@@ -24,6 +25,7 @@ extern driving_status_t g_driving_status;
 extern uint32_t g_sender_id;
 
 extern queue_t q_pkt_val, q_val_pkt_tx, q_val_yocto;
+extern pqueue_t q_pkt_sec_tx, q_sec_tx_wl_tx;
 
 
 typedef struct {
@@ -63,6 +65,14 @@ uint32_t delay_based_on_dist2d(double dist_2d) {
     if (dist_2d >= 400.0) return 10;
     uint32_t group = (uint32_t)(dist_2d / 80.0);
     return 60 - group * 10;
+}
+
+// 데이터의 사고 ID가 검사 대상과 ID가 일치하는지 확인하는 함수
+// 요것은 만약 사고 정보가 중복으로 수신되었다고 판단할 때, 우선순위 큐에서 제거할 때 사용됨
+static bool match_accident_id(const void *data, const void *ctx) {
+    const wl1_delayed_packet_t *pkt = data;
+    const uint64_t *target_id = ctx;
+    return pkt->packet.accident.accident_id == *target_id;
 }
 
 void *thread_val(void *arg) {
@@ -107,7 +117,24 @@ void *thread_val(void *arg) {
             // 유효 범위 및 방향성 필터링
             // 내 패킷 제외 && 거리/고도 유효
             if (rx->sender.sender_id != g_sender_id && dist_2d < DIST_LIMIT && alt_diff < ALT_LIMIT) {
-                
+
+                // --- 중복 수신 감지 (방향 무관) ---
+                bool is_duplicate = false;
+                // 현재 관리중인 사고 정보들 중에서, 만약 동일 ID가 이미 존재한다면 중복으로 간주
+                for (int i = 0; i < MAX_ACCIDENTS; i++) {
+                    if (accident_list[i].is_active && accident_list[i].data.accident.accident_id == rx->accident.accident_id) {
+                        is_duplicate = true;
+
+                        // 서명을 기다리는 Queue와 UDP 송신을 기다리는 Queue에서 해당 ID를 가진 패킷들을 모두 제거
+                        uint64_t aid = rx->accident.accident_id;
+                        int r1 = PQ_remove_if(&q_pkt_sec_tx, match_accident_id, &aid);
+                        int r2 = PQ_remove_if(&q_sec_tx_wl_tx, match_accident_id, &aid);
+                        if (r1 + r2 > 0)
+                            printf("[VAL-DUP] 사고 0x%lX 중복 수신 -> 큐에서 %d개 패킷 제거\n", aid, r1 + r2);
+                        break;
+                    }
+                }
+
                 // 동일 방향성 확인 (45도 이내)
                 if (head_diff <= HEADING_LIMIT) {
                     int mode = (dist_2d > 500.0) ? MODE_ALERT : MODE_RELAY;
@@ -143,8 +170,8 @@ void *thread_val(void *arg) {
                     printf("\x1b[1;33m[VAL-SKIP] 반대 방향 사고 무시 (차이: %d도)\x1b[0m\n", head_diff);
                 }
 
-                // --- 재전송(Relay) 로직 (방향 무관하게 수행) ---
-                if (rx->header.ttl > 0) {
+                // --- 재전송(Relay) 로직 (방향 무관하게 수행, 중복 시 스킵) ---
+                if (rx->header.ttl > 0 && !is_duplicate) {
                     wl1_delayed_packet_t *relay = malloc(sizeof(wl1_delayed_packet_t));
                     if (relay) {
                         memcpy(&relay->packet, rx, sizeof(wl1_packet_t));
