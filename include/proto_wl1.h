@@ -52,6 +52,14 @@ typedef struct {
     wl1_security_t security; // 192B
 } wl1_packet_t;
 
+// 해당 WL 패킷을 시스템시간 기준 몇 ms에 송신할 것인지 정보를 함께 담은 구조체
+// 여기의 target_send_time_ms가 WL1 패킷이 실제로 외부로 나가는 목표 시간임
+// 얼마나 딜레이 될 지가 아닌, 정확한 송신 시각을 지정
+// 이 시간이 안되었다면 대기. 지나갔다면 즉시 송신.
+typedef struct {
+    wl1_packet_t packet;
+    uint32_t target_send_time_ms;
+} wl1_delayed_packet_t;
 
 #pragma pack(pop)
 
