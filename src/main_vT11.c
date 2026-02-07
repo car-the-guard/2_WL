@@ -97,7 +97,8 @@ static uint64_t get_current_timestamp_ms() {
 
 void *final_test_thread_wUART(void *arg) {
     // 메인에서 open한 /dev/ttyAMA1의 fd를 인자로 받습니다.
-    int uart_fd = *((int *)arg); 
+    //int uart_fd = *((int *)arg); 
+    int g_uart_fd = *((int *)arg); 
     int wl4_counter = 0; // 카운터 추가
     sleep(3);
 
@@ -158,7 +159,9 @@ void *final_test_thread_wUART(void *arg) {
             wl4_set_direction(&wl4_pkt, 43); // 테스트용 방향
             wl4_pkt.etx = 0xFE;          // PKT_ETX
             // 3. 전송
-            write(uart_fd, &wl4_pkt, sizeof(wl4_packet_t));
+            //g_uart_fd
+            //write(uart_fd, &wl4_pkt, sizeof(wl4_packet_t));
+            write(g_uart_fd, &wl4_pkt, sizeof(wl4_packet_t));
             
             // [추가] 내가 보낸 6바이트가 메모리에 어떻게 생겼나 찍어보기
             // HEX 로그 확인용
@@ -204,7 +207,10 @@ void *final_test_thread_wUART(void *arg) {
     clock_gettime(CLOCK_MONOTONIC, &tx_time);
 
     // 물리적 UART 드라이버에 쓰기
-    ssize_t sent = write(uart_fd, &test_wl3, sizeof(wl3_packet_t));
+    //ssize_t sent = write(uart_fd, &test_wl3, sizeof(wl3_packet_t));
+    ssize_t sent = write(g_uart_fd, &test_wl3, sizeof(wl3_packet_t));
+    
+
     // 사고 전송 후에는 2~3초 정도 쉬면서 수신 보드의 타임아웃(5초)을 방어
             sleep(1);
             
