@@ -12,6 +12,7 @@
 #include "driving_mgr.h"
 #include "proto_wl2.h"
 #include "i2c_io.h"
+#include "utils.h"
 
 #define MAX_ACCIDENTS 20
 #define DIST_LIMIT    1000.0   // 1km 유효거리
@@ -54,6 +55,14 @@ int get_angle_diff(int a, int b) {
         diff = 360 - diff;
     }
     return diff;
+}
+
+// 거리 기반 지연 시간 계산 (단위: ms)
+// 0~80m는 60ms, 80~160m는 50ms, ..., 320~400m는 20ms, 400m 이상은 10ms
+uint32_t delay_based_on_dist2d(double dist_2d) {
+    if (dist_2d >= 400.0) return 10;
+    uint32_t group = (uint32_t)(dist_2d / 80.0);
+    return 60 - group * 10;
 }
 
 void *thread_val(void *arg) {
@@ -141,8 +150,7 @@ void *thread_val(void *arg) {
                         memcpy(&relay->packet, rx, sizeof(wl1_packet_t));
                         relay->packet.header.ttl--;
                         relay->packet.sender.sender_id = g_sender_id;
-                        // TODO: 거리 기반 + Jitter 시간 추가하기
-                        relay->target_send_time_ms = (uint32_t)(get_now_ms() + 100); // 100ms 후 송신 목표
+                        relay->target_send_time_ms = (uint32_t)(get_now_ms() + delay_based_on_dist2d(dist_2d) + jitter_ms(5));
                         Q_push(&q_val_pkt_tx, relay);
                         printf("[RELAY-ACT] 사고 0x%lX 패킷 중계 큐 삽입\n", relay->packet.accident.accident_id);
                     }
