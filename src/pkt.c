@@ -67,8 +67,8 @@ void *sub_thread_pkt_tx(void *arg) {
 
                 /* --- [1] HEADER 조립 --- */
                 pkt->header.version  = 0x01;
-                //pkt->header.msg_type = 0x03; // WL-3 기반 사고 알림 타입
-                pkt->header.msg_type = wl3->type; 
+            
+                pkt->header.msg_type = 0x00; // from 차량
                 pkt->header.ttl      = 3;    // 최초 발생 패킷 TTL 설정
                 pkt->header.reserved = 0x00;
 

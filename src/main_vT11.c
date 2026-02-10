@@ -47,6 +47,7 @@ extern void *thread_gps(void *arg);
 volatile bool g_keep_running = true;
 uint32_t g_sender_id;
 extern double g_accident_point; 
+extern int g_uart_fd;
 //wl_ctx_t g_wl_tx_ctx;
 
 
@@ -98,9 +99,14 @@ static uint64_t get_current_timestamp_ms() {
 void *final_test_thread_wUART(void *arg) {
     // 메인에서 open한 /dev/ttyAMA1의 fd를 인자로 받습니다.
     //int uart_fd = *((int *)arg); 
-    int g_uart_fd = *((int *)arg); 
+    //int g_uart_fd = *((int *)arg); 
     int wl4_counter = 0; // 카운터 추가
+    // 인자로 받지 말고, 전역 변수가 세팅될 때까지 대기
+    while (g_uart_fd < 0 && g_keep_running) {
+        usleep(100000); // 100ms씩 쉬면서 대기
+    }
     sleep(3);
+    DBG_INFO("[TEST] UART Ready (fd: %d). Loopback Test Start.\n", g_uart_fd);
 
     if (g_sender_id != 0x1111) return NULL;
 
@@ -161,7 +167,9 @@ void *final_test_thread_wUART(void *arg) {
             // 3. 전송
             //g_uart_fd
             //write(uart_fd, &wl4_pkt, sizeof(wl4_packet_t));
-            write(g_uart_fd, &wl4_pkt, sizeof(wl4_packet_t));
+            //write(g_uart_fd, &wl4_pkt, sizeof(wl4_packet_t));
+            //ssize_t sent = write(g_uart_fd, &test_wl3, sizeof(wl3_packet_t));
+            ssize_t sent = write(g_uart_fd, &wl4_pkt, sizeof(wl4_packet_t));
             
             // [추가] 내가 보낸 6바이트가 메모리에 어떻게 생겼나 찍어보기
             // HEX 로그 확인용
@@ -193,7 +201,7 @@ void *final_test_thread_wUART(void *arg) {
     wl3_set_direction(&test_wl3, 40); 
     
     test_wl3.lane = 2;               // 2차선
-    test_wl3.severity = 1;           // 위험도 설정
+    test_wl3.severity = 2;           // 위험도 설정
     
     // 64비트 ID 및 시간 설정
     test_wl3.accident_id = 0x1234567812345678ULL; 
