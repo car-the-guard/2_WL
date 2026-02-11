@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 #include <stdbool.h>
 #include <string.h>
 #include <stdint.h>
@@ -19,8 +20,10 @@
 #include "driving_mgr.h"
 
 
+
 #define PKT_STX 0xFD
 #define PKT_ETX 0xFE
+#define MAX_RANGE     1000.0 // 최대 유효 거리 (미터 단위)
 
 extern queue_t q_rx_sec_rx;     // 필터 통과 → 보안 모듈
 extern queue_t q_pkt_val;       // RX 패킷 -> VAL 모듈 전달용
@@ -31,6 +34,25 @@ extern queue_t q_pkt_sec_tx;    // 조립 완료된 패킷 -> 보안 서명 큐
 extern volatile bool g_keep_running;
 extern uint32_t g_sender_id;
 extern driving_status_t g_driving_status;
+
+
+bool is_forward(double my_lat, double my_lon, int my_head, double target_lat, double target_lon) {
+    // 1. 위경도 차이를 미터 단위로 근사 (한국 위도 기준)
+    double dx = (target_lon - my_lon) * 88804.0; 
+    double dy = (target_lat - my_lat) * 111319.9;
+
+    // 2. 내 헤딩을 수학적 라디안으로 변환 (0도 북쪽 -> 시계방향 기준)
+    double rad = (90.0 - (double)my_head) * M_PI / 180.0;
+    
+    // 3. 내 주행 방향 단위 벡터
+    double vx = cos(rad);
+    double vy = sin(rad);
+
+    // 4. 내적(Dot Product): v · d
+    // 결과가 0보다 크면 전방, 0보다 작으면 후방
+    return (dx * vx + dy * vy) > 0;
+}
+
 
 // 현재 타임스탬프를 마이크로초 단위로 가져오는 헬퍼 함수
 static uint64_t get_current_timestamp_us() {
@@ -191,6 +213,30 @@ void *sub_thread_pkt_rx(void *arg) {
                 free(rx_pkt); // VAL로 넘기지 않고 여기서 메모리 해제
                 continue;     // 다음 패킷 대기
             }
+
+            // 2. 내 현재 위치 및 방향 정보 스냅샷
+        pthread_mutex_lock(&g_driving_status.lock);
+        double my_lat = g_driving_status.lat;
+        double my_lon = g_driving_status.lon;
+        int my_head = g_driving_status.heading;
+        pthread_mutex_unlock(&g_driving_status.lock);
+
+        double t_lat = (double)rx_pkt->accident.lat_uDeg / 1000000.0;
+        double t_lon = (double)rx_pkt->accident.lon_uDeg / 1000000.0;
+
+        // 3. 거리 및 전방 유효성 필터 (물리적 입구 컷)
+        double dist = calc_dist(my_lat, my_lon, t_lat, t_lon);
+        bool forward = is_forward(my_lat, my_lon, my_head, t_lat, t_lon);
+
+        if (dist > MAX_RANGE || !forward) {
+            // 너무 멀거나 뒤쪽 패킷은 보안 스레드로 보내지 않음
+            free(rx_pkt); continue;
+        }
+
+
+
+
+
             DBG_INFO("PKT-RX: Incoming Packet (Sender: 0x%lX, Accident: 0x%lX)", 
                      rx_pkt->sender.sender_id, rx_pkt->accident.accident_id);
             // 2. [추가] VAL 스레드(T4)로 데이터 배달
