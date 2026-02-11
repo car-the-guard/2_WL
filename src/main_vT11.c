@@ -220,7 +220,7 @@ void *final_test_thread_wUART(void *arg) {
     
 
     // 사고 전송 후에는 2~3초 정도 쉬면서 수신 보드의 타임아웃(5초)을 방어
-            sleep(1);
+            //sleep(4); // 4초마다 한 번씩 '사고' 발생 알림
             
     if (sent > 0) {
         DBG_INFO("[UART-TX] Success: WL-3 sent via HW (%ld bytes) at %ld.%06ld\n", 
@@ -229,9 +229,9 @@ void *final_test_thread_wUART(void *arg) {
         perror("[UART-TX] Failed to write to /dev/ttyAMA1");
         }
     }
-    
+     sleep(4); // 4초마다 한 번씩 '사고' 발생 알림
 
-    sleep(3); 
+    //sleep(10); 
     }
     return NULL;
 }
