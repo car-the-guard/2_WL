@@ -317,7 +317,7 @@ int main(int argc, char *argv[]) {
 
 
     // [수정] 테스트 스레드 생성 부분
-    pthread_t final_test_tid;
+    /*pthread_t final_test_tid;
     if (g_sender_id == 0x1111) {
         static int passing_fd; 
         //passing_fd = uart_fd;
@@ -328,7 +328,7 @@ int main(int argc, char *argv[]) {
         } else {
             printf("[MAIN] 차1: UART 루프백 테스트 스레드가 시작되었습니다.\n");
         }
-    }
+    }*/
     // 3. 메인 모니터링 루프
     
     

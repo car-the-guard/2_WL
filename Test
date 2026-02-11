@@ -1,0 +1,48 @@
+11 Feb 08:09:59 ntpdate[12550]: adjust time server 121.134.215.104 offset -0.000456 sec
+[DEBUG] Log System Initialized (KST Timezone applied)
+[17:09:59.725][INFO ][src/gps.c:16] GPS: Mock Mode Initialized.
+--- Integrated V2X System Start ---
+[17:09:59.725][INFO ][src/wl.c:58] Thread 1: Wireless RX Module started.
+[17:09:59.725][INFO ][src/sec.c:61] [17:09:59.725][INFO ][src/val.c:88] Thread 4: VAL Controller started.Thread 2: Security RX Module started.
+
+[17:09:59.725][INFO ][src/pkt.c:201]   - PKT-RX Sub-thread started.
+[17:09:59.725][INFO ][src/pkt.c:73]   - PKT-TX Sub-thread started (Dual-Path Aggregation).
+[17:09:59.725][INFO ][src/sec.c:40] Thread 7: Security TX Module started.
+[17:09:59.725][INFO ][src/wl.c:86] Thread 8: Wireless TX Module started.
+[17:09:59.725][INFO ][src/main_vT11.c:313] [MAIN] /dev/ttyAMA1 opened and configured (fd: -1)
+
+[17:09:59.725][INFO ][src/gps.c:38] Thread 7: GPS Client Module started.
+[17:09:59.725][INFO ][src/yocto_if.c:117] Thread 9: Yocto Interface Module started (UART3 Mode).
+[17:09:59.725][INFO ][src/yocto_if.c:118] [T9] UART3 모듈 시작 (WL2/3: 50ms, WL4: 30s 주기)
+[17:09:59.976][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 8 bytes
+[17:09:59.976][INFO ][src/yocto_if.c:159] [T9-RX] WL-4 수신: 방향(0), 시간(21363)
+[17:10:15.126][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 8 bytes
+[17:10:15.126][INFO ][src/yocto_if.c:159] [T9-RX] WL-4 수신: 방향(0), 시간(22190)
+[17:10:15.976][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 26 bytes
+[17:10:15.976][INFO ][src/yocto_if.c:182] [32m[T9-RX] WL-3 수신: 내 사고 데이터 전달[0m
+[17:10:15.984][INFO ][src/pkt.c:147] [32m[PKT-TX] 내 사고 조립 완료 (ACC_ID: 0xBB20886900000000, Lane: 0, Sev: 2, Time: 5620492334958379008, Dir: 0)[0m
+[17:10:15.984][INFO ][src/pkt.c:185] [PKT-TX] WL-1 전체 패킷 조립 완료 (SenderID: 0x1111, AccID: 0xBB20886900000000)
+[17:10:15.984][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:10:15.984][INFO ][src/wl.c:95] [1;32m[TX] WL-1 Broadcast Success! (ID: 0x1111)[0m
+[17:10:15.984][INFO ][src/pkt.c:211] PKT-RX: Loopback packet detected (ID: 0x1111). Self-dropping.
+[17:10:17.223][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:10:19.223][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:10:21.223][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:10:23.223][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:10:25.223][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:10:27.223][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:10:29.223][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:10:30.226][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 8 bytes
+[17:10:30.226][INFO ][src/yocto_if.c:159] [T9-RX] WL-4 수신: 방향(0), 시간(23529)
+[17:10:31.223][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:10:33.223][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+

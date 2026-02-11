@@ -1,0 +1,856 @@
+11 Feb 07:55:08 ntpdate[5136]: adjust time server 211.108.117.211 offset +0.002225 sec
+[DEBUG] Log System Initialized (KST Timezone applied)
+[16:55:08.606][INFO ][src/gps.c:16] GPS: Mock Mode Initialized.
+--- Integrated V2X System Start ---
+[16:55:08.606][INFO ][src/wl.c:58] Thread 1: Wireless RX Module started.
+[16:55:08.606][INFO ][src/sec.c:61] Thread 2: Security RX Module started.
+[16:55:08.607][INFO ][src/val.c:88] Thread 4: VAL Controller started.
+[16:55:08.607][INFO ][src/pkt.c:201]   - PKT-RX Sub-thread started.
+[16:55:08.607][INFO ][src/pkt.c:73]   - PKT-TX Sub-thread started (Dual-Path Aggregation).
+[16:55:08.607][INFO ][src/main_vT11.c:313] [MAIN] /dev/ttyAMA1 opened and configured (fd: -1)
+
+[16:55:08.607][INFO ][src/gps.c:38] Thread 7: GPS Client Module started.
+[16:55:08.607][INFO ][src/sec.c:40] Thread 7: Security TX Module started.
+[16:55:08.607][INFO ][src/yocto_if.c:117] Thread 9: Yocto Interface Module started (UART3 Mode).
+[16:55:08.607][INFO ][src/yocto_if.c:118] [T9] UART3 모듈 시작 (WL2/3: 50ms, WL4: 30s 주기)
+[16:55:08.608][INFO ][src/wl.c:86] Thread 8: Wireless TX Module started.
+[16:55:08.658][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 8 bytes
+[16:55:08.658][INFO ][src/yocto_if.c:159] [T9-RX] WL-4 수신: 방향(0), 시간(36313)
+[16:55:15.758][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 26 bytes
+[16:55:15.758][INFO ][src/yocto_if.c:182] [32m[T9-RX] WL-3 수신: 내 사고 데이터 전달[0m
+[16:55:15.763][INFO ][src/pkt.c:147] [32m[PKT-TX] 내 사고 조립 완료 (ACC_ID: 0x371D886900000000, Lane: 0, Sev: 2, Time: 72057594037927936, Dir: 0)[0m
+[16:55:15.763][INFO ][src/pkt.c:185] [PKT-TX] WL-1 전체 패킷 조립 완료 (SenderID: 0x1111, AccID: 0x371D886900000000)
+[16:55:15.763][INFO ][src/wl.c:95] [1;32m[TX] WL-1 Broadcast Success! (ID: 0x1111)[0m
+[16:55:15.763][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[16:55:15.763][INFO ][src/pkt.c:211] PKT-RX: Loopback packet detected (ID: 0x1111). Self-dropping.
+[16:55:23.758][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 8 bytes
+[16:55:23.758][INFO ][src/yocto_if.c:159] [T9-RX] WL-4 수신: 방향(0), 시간(36628)
+[16:55:38.858][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 8 bytes
+[16:55:38.858][INFO ][src/yocto_if.c:159] [T9-RX] WL-4 수신: 방향(0), 시간(37711)
+[16:55:48.108][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 26 bytes
+[16:55:48.108][INFO ][src/yocto_if.c:182] [32m[T9-RX] WL-3 수신: 내 사고 데이터 전달[0m
+[16:55:48.108][INFO ][src/pkt.c:147] [32m[PKT-TX] 내 사고 조립 완료 (ACC_ID: 0x571D886900000000, Lane: 0, Sev: 2, Time: 144115188075855872, Dir: 0)[0m
+[16:55:48.108][INFO ][src/pkt.c:185] [PKT-TX] WL-1 전체 패킷 조립 완료 (SenderID: 0x1111, AccID: 0x571D886900000000)
+[16:55:48.108][INFO ][src/wl.c:95] [1;32m[TX] WL-1 Broadcast Success! (ID: 0x1111)[0m
+[16:55:48.108][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[16:55:48.108][INFO ][src/pkt.c:211] PKT-RX: Loopback packet detected (ID: 0x1111). Self-dropping.
+[16:55:53.958][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 8 bytes
+[16:55:53.958][INFO ][src/yocto_if.c:159] [T9-RX] WL-4 수신: 방향(0), 시간(38538)
+[16:55:56.008][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 16 bytes
+[16:55:56.058][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 10 bytes
+[16:56:08.908][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 26 bytes
+[16:56:08.908][INFO ][src/yocto_if.c:182] [32m[T9-RX] WL-3 수신: 내 사고 데이터 전달[0m
+[16:56:08.914][INFO ][src/pkt.c:147] [32m[PKT-TX] 내 사고 조립 완료 (ACC_ID: 0x6C1D886900000000, Lane: 0, Sev: 2, Time: 288230376151711744, Dir: 0)[0m
+[16:56:08.914][INFO ][src/pkt.c:185] [PKT-TX] WL-1 전체 패킷 조립 완료 (SenderID: 0x1111, AccID: 0x6C1D886900000000)
+[16:56:08.914][INFO ][src/wl.c:95] [1;32m[TX] WL-1 Broadcast Success! (ID: 0x1111)[0m
+[16:56:08.914][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[16:56:08.914][INFO ][src/pkt.c:211] PKT-RX: Loopback packet detected (ID: 0x1111). Self-dropping.
+[16:56:09.058][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 8 bytes
+[16:56:09.058][INFO ][src/yocto_if.c:159] [T9-RX] WL-4 수신: 방향(0), 시간(39365)
+[16:56:24.208][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 8 bytes
+[16:56:24.208][INFO ][src/yocto_if.c:159] [T9-RX] WL-4 수신: 방향(0), 시간(40448)
+[16:56:39.308][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 8 bytes
+[16:56:39.308][INFO ][src/yocto_if.c:159] [T9-RX] WL-4 수신: 방향(0), 시간(41019)
+[16:56:54.408][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 8 bytes
+[16:56:54.408][INFO ][src/yocto_if.c:159] [T9-RX] WL-4 수신: 방향(0), 시간(41846)
+[16:56:57.008][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 26 bytes
+[16:56:57.008][INFO ][src/yocto_if.c:182] [32m[T9-RX] WL-3 수신: 내 사고 데이터 전달[0m
+[16:56:57.014][INFO ][src/pkt.c:147] [32m[PKT-TX] 내 사고 조립 완료 (ACC_ID: 0x9C1D886900000000, Lane: 0, Sev: 2, Time: 360287970189639680, Dir: 0)[0m
+[16:56:57.014][INFO ][src/pkt.c:185] [PKT-TX] WL-1 전체 패킷 조립 완료 (SenderID: 0x1111, AccID: 0x9C1D886900000000)
+[16:56:57.014][INFO ][src/wl.c:95] [1;32m[TX] WL-1 Broadcast Success! (ID: 0x1111)[0m
+[16:56:57.014][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[16:56:57.014][INFO ][src/pkt.c:211] PKT-RX: Loopback packet detected (ID: 0x1111). Self-dropping.
+[16:56:58.758][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 16 bytes
+[16:56:58.808][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 10 bytes
+[16:57:06.208][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 26 bytes
+[16:57:06.208][INFO ][src/yocto_if.c:182] [32m[T9-RX] WL-3 수신: 내 사고 데이터 전달[0m
+[16:57:06.210][INFO ][src/pkt.c:147] [32m[PKT-TX] 내 사고 조립 완료 (ACC_ID: 0xA51D886900000000, Lane: 0, Sev: 2, Time: 504403158265495552, Dir: 0)[0m
+[16:57:06.210][INFO ][src/pkt.c:185] [PKT-TX] WL-1 전체 패킷 조립 완료 (SenderID: 0x1111, AccID: 0xA51D886900000000)
+[16:57:06.210][INFO ][src/wl.c:95] [1;32m[TX] WL-1 Broadcast Success! (ID: 0x1111)[0m
+[16:57:06.210][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[16:57:06.210][INFO ][src/pkt.c:211] PKT-RX: Loopback packet detected (ID: 0x1111). Self-dropping.
+[16:57:09.508][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 8 bytes
+[16:57:09.508][INFO ][src/yocto_if.c:159] [T9-RX] WL-4 수신: 방향(0), 시간(42929)
+[16:57:21.708][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 26 bytes
+[16:57:21.708][INFO ][src/yocto_if.c:182] [32m[T9-RX] WL-3 수신: 내 사고 데이터 전달[0m
+[16:57:21.713][INFO ][src/pkt.c:147] [32m[PKT-TX] 내 사고 조립 완료 (ACC_ID: 0xB51D886900000000, Lane: 0, Sev: 2, Time: 576460752303423488, Dir: 0)[0m
+[16:57:21.713][INFO ][src/pkt.c:185] [PKT-TX] WL-1 전체 패킷 조립 완료 (SenderID: 0x1111, AccID: 0xB51D886900000000)
+[16:57:21.713][INFO ][src/wl.c:95] [1;32m[TX] WL-1 Broadcast Success! (ID: 0x1111)[0m
+[16:57:21.713][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[16:57:21.714][INFO ][src/pkt.c:211] PKT-RX: Loopback packet detected (ID: 0x1111). Self-dropping.
+[16:57:24.608][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 8 bytes
+[16:57:24.608][INFO ][src/yocto_if.c:159] [T9-RX] WL-4 수신: 방향(0), 시간(43756)
+[16:57:39.708][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 8 bytes
+[16:57:39.708][INFO ][src/yocto_if.c:159] [T9-RX] WL-4 수신: 방향(0), 시간(44327)
+[16:57:54.858][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 8 bytes
+[16:57:54.858][INFO ][src/yocto_if.c:159] [T9-RX] WL-4 수신: 방향(0), 시간(45922)
+[16:58:03.058][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 16 bytes
+[16:58:03.108][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 10 bytes
+[16:58:08.708][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 16 bytes
+[16:58:08.758][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 10 bytes
+[16:58:09.958][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 8 bytes
+[16:58:09.958][INFO ][src/yocto_if.c:159] [T9-RX] WL-4 수신: 방향(0), 시간(46749)
+[16:58:13.608][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 26 bytes
+[16:58:13.608][INFO ][src/yocto_if.c:182] [32m[T9-RX] WL-3 수신: 내 사고 데이터 전달[0m
+[16:58:13.608][INFO ][src/pkt.c:147] [32m[PKT-TX] 내 사고 조립 완료 (ACC_ID: 0xE81D886900000000, Lane: 0, Sev: 2, Time: 792633534417207296, Dir: 0)[0m
+[16:58:13.608][INFO ][src/pkt.c:185] [PKT-TX] WL-1 전체 패킷 조립 완료 (SenderID: 0x1111, AccID: 0xE81D886900000000)
+[16:58:13.609][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+[16:58:13.609][INFO ][src/wl.c:95] [1;32m[TX] WL-1 Broadcast Success! (ID: 0x1111)[0m
+
+[16:58:13.609][INFO ][src/pkt.c:211] PKT-RX: Loopback packet detected (ID: 0x1111). Self-dropping.
+[16:58:19.908][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 26 bytes
+[16:58:19.908][INFO ][src/yocto_if.c:182] [32m[T9-RX] WL-3 수신: 내 사고 데이터 전달[0m
+[16:58:19.917][INFO ][src/pkt.c:147] [32m[PKT-TX] 내 사고 조립 완료 (ACC_ID: 0xEF1D886900000000, Lane: 0, Sev: 2, Time: 864691128455135232, Dir: 0)[0m
+[16:58:19.917][INFO ][src/pkt.c:185] [PKT-TX] WL-1 전체 패킷 조립 완료 (SenderID: 0x1111, AccID: 0xEF1D886900000000)
+[16:58:19.917][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[16:58:19.917][INFO ][src/wl.c:95] [1;32m[TX] WL-1 Broadcast Success! (ID: 0x1111)[0m
+[16:58:19.917][INFO ][src/pkt.c:211] PKT-RX: Loopback packet detected (ID: 0x1111). Self-dropping.
+[16:58:22.758][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 16 bytes
+[16:58:22.808][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 10 bytes
+[16:58:25.058][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 8 bytes
+[16:58:25.058][INFO ][src/yocto_if.c:159] [T9-RX] WL-4 수신: 방향(0), 시간(47576)
+[16:58:26.758][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 26 bytes
+[16:58:26.758][INFO ][src/yocto_if.c:182] [32m[T9-RX] WL-3 수신: 내 사고 데이터 전달[0m
+[16:58:26.759][INFO ][src/pkt.c:147] [32m[PKT-TX] 내 사고 조립 완료 (ACC_ID: 0xF61D886900000000, Lane: 0, Sev: 2, Time: 1008806316530991104, Dir: 0)[0m
+[16:58:26.759][INFO ][src/pkt.c:185] [PKT-TX] WL-1 전체 패킷 조립 완료 (SenderID: 0x1111, AccID: 0xF61D886900000000)
+[16:58:26.759][INFO ][src/wl.c:95] [1;32m[TX] WL-1 Broadcast Success! (ID: 0x1111)[0m
+[16:58:26.759][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[16:58:26.759][INFO ][src/pkt.c:211] PKT-RX: Loopback packet detected (ID: 0x1111). Self-dropping.
+[16:58:35.658][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 26 bytes
+[16:58:35.658][INFO ][src/yocto_if.c:182] [32m[T9-RX] WL-3 수신: 내 사고 데이터 전달[0m
+[16:58:35.663][INFO ][src/pkt.c:147] [32m[PKT-TX] 내 사고 조립 완료 (ACC_ID: 0xFF1D886900000000, Lane: 0, Sev: 2, Time: 1080863910568919040, Dir: 0)[0m
+[16:58:35.663][INFO ][src/pkt.c:185] [PKT-TX] WL-1 전체 패킷 조립 완료 (SenderID: 0x1111, AccID: 0xFF1D886900000000)
+[16:58:35.663][INFO ][src/wl.c:95] [1;32m[TX] WL-1 Broadcast Success! (ID: 0x1111)[0m
+[16:58:35.663][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[16:58:35.663][INFO ][src/pkt.c:211] PKT-RX: Loopback packet detected (ID: 0x1111). Self-dropping.
+[16:58:40.158][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 8 bytes
+[16:58:40.158][INFO ][src/yocto_if.c:159] [T9-RX] WL-4 수신: 방향(0), 시간(48403)
+[16:58:48.258][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 26 bytes
+[16:58:48.258][INFO ][src/yocto_if.c:182] [32m[T9-RX] WL-3 수신: 내 사고 데이터 전달[0m
+[16:58:48.259][INFO ][src/pkt.c:147] [32m[PKT-TX] 내 사고 조립 완료 (ACC_ID: 0xB1E886900000000, Lane: 0, Sev: 2, Time: 1152921504606846976, Dir: 0)[0m
+[16:58:48.259][INFO ][src/pkt.c:185] [PKT-TX] WL-1 전체 패킷 조립 완료 (SenderID: 0x1111, AccID: 0xB1E886900000000)
+[16:58:48.259][INFO ][src/wl.c:95] [1;32m[TX] WL-1 Broadcast Success! (ID: 0x1111)[0m
+[16:58:48.259][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[16:58:48.259][INFO ][src/pkt.c:211] PKT-RX: Loopback packet detected (ID: 0x1111). Self-dropping.
+[16:58:55.258][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 8 bytes
+[16:58:55.258][INFO ][src/yocto_if.c:159] [T9-RX] WL-4 수신: 방향(0), 시간(49230)
+[16:59:03.108][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 16 bytes
+[16:59:03.158][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 10 bytes
+[16:59:10.358][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 8 bytes
+[16:59:10.358][INFO ][src/yocto_if.c:159] [T9-RX] WL-4 수신: 방향(0), 시간(50313)
+[16:59:20.058][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 16 bytes
+[16:59:20.108][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 10 bytes
+[16:59:25.458][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 8 bytes
+[16:59:25.458][INFO ][src/yocto_if.c:159] [T9-RX] WL-4 수신: 방향(0), 시간(51396)
+[16:59:38.608][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 26 bytes
+[16:59:38.608][INFO ][src/yocto_if.c:182] [32m[T9-RX] WL-3 수신: 내 사고 데이터 전달[0m
+[16:59:38.613][INFO ][src/pkt.c:147] [32m[PKT-TX] 내 사고 조립 완료 (ACC_ID: 0x3D1E886900000000, Lane: 0, Sev: 2, Time: 1369094286720630784, Dir: 0)[0m
+[16:59:38.613][INFO ][src/pkt.c:185] [PKT-TX] WL-1 전체 패킷 조립 완료 (SenderID: 0x1111, AccID: 0x3D1E886900000000)
+[16:59:38.613][INFO ][src/wl.c:95] [1;32m[TX] WL-1 Broadcast Success! (ID: 0x1111)[0m[16:59:38.613][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[16:59:38.613][INFO ][src/pkt.c:211] PKT-RX: Loopback packet detected (ID: 0x1111). Self-dropping.
+
+[16:59:40.608][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 8 bytes
+[16:59:40.608][INFO ][src/yocto_if.c:159] [T9-RX] WL-4 수신: 방향(0), 시간(52735)
+[16:59:52.208][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 16 bytes
+[16:59:52.258][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 10 bytes
+[16:59:55.708][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 8 bytes
+[16:59:55.708][INFO ][src/yocto_if.c:159] [T9-RX] WL-4 수신: 방향(0), 시간(53562)
+[17:00:10.808][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 8 bytes
+[17:00:10.808][INFO ][src/yocto_if.c:159] [T9-RX] WL-4 수신: 방향(0), 시간(54389)
+[17:00:25.908][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 8 bytes
+[17:00:25.908][INFO ][src/yocto_if.c:159] [T9-RX] WL-4 수신: 방향(0), 시간(54960)
+[17:00:41.008][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 8 bytes
+[17:00:41.008][INFO ][src/yocto_if.c:159] [T9-RX] WL-4 수신: 방향(0), 시간(55787)
+[17:00:45.558][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 26 bytes
+[17:00:45.558][INFO ][src/yocto_if.c:182] [32m[T9-RX] WL-3 수신: 내 사고 데이터 전달[0m
+[17:00:45.567][INFO ][src/pkt.c:147] [32m[PKT-TX] 내 사고 조립 완료 (ACC_ID: 0x801E886900000000, Lane: 0, Sev: 2, Time: 1513209474796486656, Dir: 0)[0m
+[17:00:45.567][INFO ][src/pkt.c:185] [PKT-TX] WL-1 전체 패킷 조립 완료 (SenderID: 0x1111, AccID: 0x801E886900000000)
+[17:00:45.567][INFO ][src/wl.c:95] [1;32m[TX] WL-1 Broadcast Success! (ID: 0x1111)[0m
+[17:00:45.567][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:00:45.567][INFO ][src/pkt.c:211] PKT-RX: Loopback packet detected (ID: 0x1111). Self-dropping.
+[17:00:56.108][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 8 bytes
+[17:00:56.108][INFO ][src/yocto_if.c:159] [T9-RX] WL-4 수신: 방향(0), 시간(57126)
+[17:01:11.258][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 8 bytes
+[17:01:11.258][INFO ][src/yocto_if.c:159] [T9-RX] WL-4 수신: 방향(0), 시간(58209)
+[17:01:21.108][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 26 bytes
+[17:01:21.108][INFO ][src/yocto_if.c:182] [32m[T9-RX] WL-3 수신: 내 사고 데이터 전달[0m
+[17:01:21.112][INFO ][src/pkt.c:147] [32m[PKT-TX] 내 사고 조립 완료 (ACC_ID: 0xA41E886900000000, Lane: 0, Sev: 2, Time: 1585267068834414592, Dir: 0)[0m
+[17:01:21.112][INFO ][src/pkt.c:185] [PKT-TX] WL-1 전체 패킷 조립 완료 (SenderID: 0x1111, AccID: 0xA41E886900000000)
+[17:01:21.112][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+[17:01:21.112][INFO ][src/wl.c:95] [1;32m[TX] WL-1 Broadcast Success! (ID: 0x1111)[0m
+
+[17:01:21.112][INFO ][src/pkt.c:211] PKT-RX: Loopback packet detected (ID: 0x1111). Self-dropping.
+[17:01:26.358][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 8 bytes
+[17:01:26.358][INFO ][src/yocto_if.c:159] [T9-RX] WL-4 수신: 방향(0), 시간(58780)
+[17:01:41.458][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 8 bytes
+[17:01:41.458][INFO ][src/yocto_if.c:159] [T9-RX] WL-4 수신: 방향(0), 시간(60375)
+[17:01:50.558][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 16 bytes
+[17:01:50.608][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 10 bytes
+[17:01:56.558][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 8 bytes
+[17:01:56.558][INFO ][src/yocto_if.c:159] [T9-RX] WL-4 수신: 방향(0), 시간(60946)
+[17:02:09.358][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 26 bytes
+[17:02:09.358][INFO ][src/yocto_if.c:182] [32m[T9-RX] WL-3 수신: 내 사고 데이터 전달[0m
+[17:02:09.366][INFO ][src/pkt.c:147] [32m[PKT-TX] 내 사고 조립 완료 (ACC_ID: 0xD41E886900000000, Lane: 0, Sev: 2, Time: 1729382256910270464, Dir: 0)[0m
+[17:02:09.366][INFO ][src/pkt.c:185] [PKT-TX] WL-1 전체 패킷 조립 완료 (SenderID: 0x1111, AccID: 0xD41E886900000000)
+[17:02:09.366][INFO ][src/wl.c:95] [1;32m[TX] WL-1 Broadcast Success! (ID: 0x1111)[0m
+[17:02:09.366][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:02:09.366][INFO ][src/pkt.c:211] PKT-RX: Loopback packet detected (ID: 0x1111). Self-dropping.
+[17:02:11.658][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 8 bytes
+[17:02:11.658][INFO ][src/yocto_if.c:159] [T9-RX] WL-4 수신: 방향(0), 시간(62029)
+[17:02:26.758][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 8 bytes
+[17:02:26.758][INFO ][src/yocto_if.c:159] [T9-RX] WL-4 수신: 방향(0), 시간(62856)
+[17:02:34.708][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 26 bytes
+[17:02:34.708][INFO ][src/yocto_if.c:182] [32m[T9-RX] WL-3 수신: 내 사고 데이터 전달[0m
+[17:02:34.710][INFO ][src/pkt.c:147] [32m[PKT-TX] 내 사고 조립 완료 (ACC_ID: 0xEE1E886900000000, Lane: 0, Sev: 2, Time: 1801439850948198400, Dir: 0)[0m
+[17:02:34.710][INFO ][src/pkt.c:185] [PKT-TX] WL-1 전체 패킷 조립 완료 (SenderID: 0x1111, AccID: 0xEE1E886900000000)
+[17:02:34.710][INFO ][src/wl.c:95] [1;32m[TX] WL-1 Broadcast Success! (ID: 0x1111)[0m
+[17:02:34.710][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:02:34.710][INFO ][src/pkt.c:211] PKT-RX: Loopback packet detected (ID: 0x1111). Self-dropping.
+[17:02:41.908][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 8 bytes
+[17:02:41.908][INFO ][src/yocto_if.c:159] [T9-RX] WL-4 수신: 방향(0), 시간(63683)
+[17:02:57.008][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 8 bytes
+[17:02:57.008][INFO ][src/yocto_if.c:159] [T9-RX] WL-4 수신: 방향(0), 시간(65022)
+[17:03:03.608][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 26 bytes
+[17:03:03.608][INFO ][src/yocto_if.c:182] [32m[T9-RX] WL-3 수신: 내 사고 데이터 전달[0m
+[17:03:03.615][INFO ][src/pkt.c:147] [32m[PKT-TX] 내 사고 조립 완료 (ACC_ID: 0xA1F886900000000, Lane: 0, Sev: 2, Time: 1873497444986126336, Dir: 0)[0m
+[17:03:03.615][INFO ][src/pkt.c:185] [PKT-TX] WL-1 전체 패킷 조립 완료 (SenderID: 0x1111, AccID: 0xA1F886900000000)
+[17:03:03.615][INFO ][src/wl.c:95] [1;32m[TX] WL-1 Broadcast Success! (ID: 0x1111)[0m
+[17:03:03.615][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:03:03.615][INFO ][src/pkt.c:211] PKT-RX: Loopback packet detected (ID: 0x1111). Self-dropping.
+[17:03:12.108][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 8 bytes
+[17:03:12.108][INFO ][src/yocto_if.c:159] [T9-RX] WL-4 수신: 방향(0), 시간(314)
+[17:03:13.508][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 26 bytes
+[17:03:13.508][INFO ][src/yocto_if.c:182] [32m[T9-RX] WL-3 수신: 내 사고 데이터 전달[0m
+[17:03:13.515][INFO ][src/pkt.c:147] [32m[PKT-TX] 내 사고 조립 완료 (ACC_ID: 0x141F886900000000, Lane: 0, Sev: 2, Time: 1945555039024054272, Dir: 0)[0m
+[17:03:13.515][INFO ][src/pkt.c:185] [PKT-TX] WL-1 전체 패킷 조립 완료 (SenderID: 0x1111, AccID: 0x141F886900000000)
+[17:03:13.515][INFO ][src/wl.c:95] [1;32m[TX] WL-1 Broadcast Success! (ID: 0x1111)[0m
+[17:03:13.515][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:03:13.515][INFO ][src/pkt.c:211] PKT-RX: Loopback packet detected (ID: 0x1111). Self-dropping.
+[17:03:18.558][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 16 bytes
+[17:03:18.608][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 10 bytes
+[17:03:21.708][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 26 bytes
+[17:03:21.708][INFO ][src/yocto_if.c:182] [32m[T9-RX] WL-3 수신: 내 사고 데이터 전달[0m
+[17:03:21.715][INFO ][src/pkt.c:147] [32m[PKT-TX] 내 사고 조립 완료 (ACC_ID: 0x1D1F886900000000, Lane: 0, Sev: 2, Time: 2089670227099910144, Dir: 0)[0m
+[17:03:21.715][INFO ][src/pkt.c:185] [PKT-TX] WL-1 전체 패킷 조립 완료 (SenderID: 0x1111, AccID: 0x1D1F886900000000)
+[17:03:21.715][INFO ][src/wl.c:95] [1;32m[TX] WL-1 Broadcast Success! (ID: 0x1111)[0m
+[17:03:21.715][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:03:21.715][INFO ][src/pkt.c:211] PKT-RX: Loopback packet detected (ID: 0x1111). Self-dropping.
+[17:03:27.208][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 8 bytes
+[17:03:27.208][INFO ][src/yocto_if.c:159] [T9-RX] WL-4 수신: 방향(0), 시간(885)
+[17:03:31.608][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 26 bytes
+[17:03:31.608][INFO ][src/yocto_if.c:182] [32m[T9-RX] WL-3 수신: 내 사고 데이터 전달[0m
+[17:03:31.615][INFO ][src/pkt.c:147] [32m[PKT-TX] 내 사고 조립 완료 (ACC_ID: 0x261F886900000000, Lane: 0, Sev: 2, Time: 2161727821137838080, Dir: 0)[0m
+[17:03:31.615][INFO ][src/pkt.c:185] [PKT-TX] WL-1 전체 패킷 조립 완료 (SenderID: 0x1111, AccID: 0x261F886900000000)
+[17:03:31.615][INFO ][src/wl.c:95] [1;32m[TX] WL-1 Broadcast Success! (ID: 0x1111)[0m
+[17:03:31.615][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:03:31.615][INFO ][src/pkt.c:211] PKT-RX: Loopback packet detected (ID: 0x1111). Self-dropping.
+[17:03:34.408][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 16 bytes
+[17:03:34.458][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 10 bytes
+[17:03:37.758][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 26 bytes
+[17:03:37.758][INFO ][src/yocto_if.c:182] [32m[T9-RX] WL-3 수신: 내 사고 데이터 전달[0m
+[17:03:37.762][INFO ][src/pkt.c:147] [32m[PKT-TX] 내 사고 조립 완료 (ACC_ID: 0x2D1F886900000000, Lane: 0, Sev: 2, Time: 2305843009213693952, Dir: 0)[0m
+[17:03:37.762][INFO ][src/pkt.c:185] [PKT-TX] WL-1 전체 패킷 조립 완료 (SenderID: 0x1111, AccID: 0x2D1F886900000000)
+[17:03:37.762][INFO ][src/wl.c:95] [1;32m[TX] WL-1 Broadcast Success! (ID: 0x1111)[0m
+[17:03:37.762][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:03:37.762][INFO ][src/pkt.c:211] PKT-RX: Loopback packet detected (ID: 0x1111). Self-dropping.
+[17:03:38.758][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 26 bytes
+[17:03:38.758][INFO ][src/yocto_if.c:182] [32m[T9-RX] WL-3 수신: 내 사고 데이터 전달[0m
+[17:03:38.758][INFO ][src/pkt.c:147] [32m[PKT-TX] 내 사고 조립 완료 (ACC_ID: 0x2E1F886900000000, Lane: 0, Sev: 2, Time: 2377900603251621888, Dir: 0)[0m
+[17:03:38.759][INFO ][src/pkt.c:185] [PKT-TX] WL-1 전체 패킷 조립 완료 (SenderID: 0x1111, AccID: 0x2E1F886900000000)
+[17:03:38.759][INFO ][src/wl.c:95] [1;32m[TX] WL-1 Broadcast Success! (ID: 0x1111)[0m
+[17:03:38.759][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:03:38.759][INFO ][src/pkt.c:211] PKT-RX: Loopback packet detected (ID: 0x1111). Self-dropping.
+[17:03:41.058][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 16 bytes
+[17:03:41.108][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 10 bytes
+[17:03:42.308][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 8 bytes
+[17:03:42.308][INFO ][src/yocto_if.c:159] [T9-RX] WL-4 수신: 방향(0), 시간(2480)
+[17:03:57.408][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 8 bytes
+[17:03:57.408][INFO ][src/yocto_if.c:159] [T9-RX] WL-4 수신: 방향(0), 시간(2795)
+[17:04:12.558][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 8 bytes
+[17:04:12.558][INFO ][src/yocto_if.c:159] [T9-RX] WL-4 수신: 방향(0), 시간(4134)
+[17:04:21.008][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 26 bytes
+[17:04:21.008][INFO ][src/yocto_if.c:182] [32m[T9-RX] WL-3 수신: 내 사고 데이터 전달[0m
+[17:04:21.014][INFO ][src/pkt.c:147] [32m[PKT-TX] 내 사고 조립 완료 (ACC_ID: 0x581F886900000000, Lane: 0, Sev: 2, Time: 2522015791327477760, Dir: 0)[0m
+[17:04:21.014][INFO ][src/pkt.c:185] [PKT-TX] WL-1 전체 패킷 조립 완료 (SenderID: 0x1111, AccID: 0x581F886900000000)
+[17:04:21.014][INFO ][src/wl.c:95] [1;32m[TX] WL-1 Broadcast Success! (ID: 0x1111)[0m
+[17:04:21.014][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:04:21.014][INFO ][src/pkt.c:211] PKT-RX: Loopback packet detected (ID: 0x1111). Self-dropping.
+[17:04:25.558][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 26 bytes
+[17:04:25.558][INFO ][src/yocto_if.c:182] [32m[T9-RX] WL-3 수신: 내 사고 데이터 전달[0m
+[17:04:25.561][INFO ][src/pkt.c:147] [32m[PKT-TX] 내 사고 조립 완료 (ACC_ID: 0x5C1F886900000000, Lane: 0, Sev: 2, Time: 2594073385365405696, Dir: 0)[0m
+[17:04:25.561][INFO ][src/pkt.c:185] [PKT-TX] WL-1 전체 패킷 조립 완료 (SenderID: 0x1111, AccID: 0x5C1F886900000000)
+[17:04:25.562][INFO ][src/wl.c:95] [1;32m[TX] WL-1 Broadcast Success! (ID: 0x1111)[0m
+[17:04:25.562][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:04:25.562][INFO ][src/pkt.c:211] PKT-RX: Loopback packet detected (ID: 0x1111). Self-dropping.
+[17:04:27.658][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 8 bytes
+[17:04:27.658][INFO ][src/yocto_if.c:159] [T9-RX] WL-4 수신: 방향(0), 시간(4961)
+[17:04:28.958][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 26 bytes
+[17:04:28.958][INFO ][src/yocto_if.c:182] [32m[T9-RX] WL-3 수신: 내 사고 데이터 전달[0m
+[17:04:28.962][INFO ][src/pkt.c:147] [32m[PKT-TX] 내 사고 조립 완료 (ACC_ID: 0x601F886900000000, Lane: 0, Sev: 2, Time: 2666130979403333632, Dir: 0)[0m
+[17:04:28.962][INFO ][src/pkt.c:185] [PKT-TX] WL-1 전체 패킷 조립 완료 (SenderID: 0x1111, AccID: 0x601F886900000000)
+[17:04:28.962][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+[17:04:28.962][INFO ][src/wl.c:95] [1;32m[TX] WL-1 Broadcast Success! (ID: 0x1111)[0m
+
+[17:04:28.962][INFO ][src/pkt.c:211] PKT-RX: Loopback packet detected (ID: 0x1111). Self-dropping.
+[17:04:32.308][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 26 bytes
+[17:04:32.308][INFO ][src/yocto_if.c:182] [32m[T9-RX] WL-3 수신: 내 사고 데이터 전달[0m
+[17:04:32.313][INFO ][src/pkt.c:147] [32m[PKT-TX] 내 사고 조립 완료 (ACC_ID: 0x631F886900000000, Lane: 0, Sev: 2, Time: 2738188573441261568, Dir: 0)[0m
+[17:04:32.313][INFO ][src/pkt.c:185] [PKT-TX] WL-1 전체 패킷 조립 완료 (SenderID: 0x1111, AccID: 0x631F886900000000)
+[17:04:32.313][INFO ][src/wl.c:95] [1;32m[TX] WL-1 Broadcast Success! (ID: 0x1111)[0m
+[17:04:32.313][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:04:32.313][INFO ][src/pkt.c:211] PKT-RX: Loopback packet detected (ID: 0x1111). Self-dropping.
+[17:04:36.758][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 16 bytes
+[17:04:36.808][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 10 bytes
+[17:04:39.158][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 26 bytes
+[17:04:39.158][INFO ][src/yocto_if.c:182] [32m[T9-RX] WL-3 수신: 내 사고 데이터 전달[0m
+[17:04:39.164][INFO ][src/pkt.c:147] [32m[PKT-TX] 내 사고 조립 완료 (ACC_ID: 0x6A1F886900000000, Lane: 0, Sev: 2, Time: 2882303761517117440, Dir: 0)[0m
+[17:04:39.164][INFO ][src/pkt.c:185] [PKT-TX] WL-1 전체 패킷 조립 완료 (SenderID: 0x1111, AccID: 0x6A1F886900000000)
+[17:04:39.165][INFO ][src/wl.c:95] [1;32m[TX] WL-1 Broadcast Success! (ID: 0x1111)[0m
+[17:04:39.165][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:04:39.165][INFO ][src/pkt.c:211] PKT-RX: Loopback packet detected (ID: 0x1111). Self-dropping.
+[17:04:42.758][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 8 bytes
+[17:04:42.758][INFO ][src/yocto_if.c:159] [T9-RX] WL-4 수신: 방향(0), 시간(5788)
+[17:04:43.608][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 16 bytes
+[17:04:43.658][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 10 bytes
+[17:04:48.358][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 16 bytes
+[17:04:48.408][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 10 bytes
+[17:04:49.358][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 16 bytes
+[17:04:49.408][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 10 bytes
+[17:04:50.908][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 16 bytes
+[17:04:50.958][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 10 bytes
+[17:04:52.808][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 26 bytes
+[17:04:52.808][INFO ][src/yocto_if.c:182] [32m[T9-RX] WL-3 수신: 내 사고 데이터 전달[0m
+[17:04:52.818][INFO ][src/pkt.c:147] [32m[PKT-TX] 내 사고 조립 완료 (ACC_ID: 0x781F886900000000, Lane: 0, Sev: 2, Time: 3242591731706757120, Dir: 0)[0m
+[17:04:52.818][INFO ][src/pkt.c:185] [PKT-TX] WL-1 전체 패킷 조립 완료 (SenderID: 0x1111, AccID: 0x781F886900000000)
+[17:04:52.818][INFO ][src/wl.c:64] [17:04:52.818][INFO ][src/wl.c:95] [1;32m[TX] WL-1 Broadcast Success! (ID: 0x1111)[0m
+[1;32m[RX] Packet Received![0m
+
+[17:04:52.818][INFO ][src/pkt.c:211] PKT-RX: Loopback packet detected (ID: 0x1111). Self-dropping.
+[17:04:55.458][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 26 bytes
+[17:04:55.458][INFO ][src/yocto_if.c:182] [32m[T9-RX] WL-3 수신: 내 사고 데이터 전달[0m
+[17:04:55.464][INFO ][src/pkt.c:147] [32m[PKT-TX] 내 사고 조립 완료 (ACC_ID: 0x7A1F886900000000, Lane: 0, Sev: 2, Time: 3314649325744685056, Dir: 0)[0m
+[17:04:55.464][INFO ][src/pkt.c:185] [PKT-TX] WL-1 전체 패킷 조립 완료 (SenderID: 0x1111, AccID: 0x7A1F886900000000)
+[17:04:55.464][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+[17:04:55.464][INFO ][src/wl.c:95] [1;32m[TX] WL-1 Broadcast Success! (ID: 0x1111)[0m
+
+[17:04:55.464][INFO ][src/pkt.c:211] PKT-RX: Loopback packet detected (ID: 0x1111). Self-dropping.
+[17:04:57.858][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 8 bytes
+[17:04:57.858][INFO ][src/yocto_if.c:159] [T9-RX] WL-4 수신: 방향(0), 시간(6871)
+[17:05:01.408][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 26 bytes
+[17:05:01.408][INFO ][src/yocto_if.c:182] [32m[T9-RX] WL-3 수신: 내 사고 데이터 전달[0m
+[17:05:01.410][INFO ][src/pkt.c:147] [32m[PKT-TX] 내 사고 조립 완료 (ACC_ID: 0x801F886900000000, Lane: 0, Sev: 2, Time: 3386706919782612992, Dir: 0)[0m
+[17:05:01.410][INFO ][src/pkt.c:185] [PKT-TX] WL-1 전체 패킷 조립 완료 (SenderID: 0x1111, AccID: 0x801F886900000000)
+[17:05:01.410][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:05:01.410][INFO ][src/wl.c:95] [1;32m[TX] WL-1 Broadcast Success! (ID: 0x1111)[0m
+[17:05:01.410][INFO ][src/pkt.c:211] PKT-RX: Loopback packet detected (ID: 0x1111). Self-dropping.
+[17:05:05.558][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 16 bytes
+[17:05:05.608][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 10 bytes
+[17:05:12.408][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 26 bytes
+[17:05:12.408][INFO ][src/yocto_if.c:182] [32m[T9-RX] WL-3 수신: 내 사고 데이터 전달[0m
+[17:05:12.417][INFO ][src/pkt.c:147] [32m[PKT-TX] 내 사고 조립 완료 (ACC_ID: 0x8B1F886900000000, Lane: 0, Sev: 2, Time: 3530822107858468864, Dir: 0)[0m
+[17:05:12.417][INFO ][src/pkt.c:185] [PKT-TX] WL-1 전체 패킷 조립 완료 (SenderID: 0x1111, AccID: 0x8B1F886900000000)
+[17:05:12.417][INFO ][src/wl.c:95] [1;32m[TX] WL-1 Broadcast Success! (ID: 0x1111)[0m
+[17:05:12.417][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:05:12.417][INFO ][src/pkt.c:211] PKT-RX: Loopback packet detected (ID: 0x1111). Self-dropping.
+[17:05:12.958][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 8 bytes
+[17:05:12.958][INFO ][src/yocto_if.c:159] [T9-RX] WL-4 수신: 방향(0), 시간(7442)
+[17:05:16.758][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 26 bytes
+[17:05:16.758][INFO ][src/yocto_if.c:182] [32m[T9-RX] WL-3 수신: 내 사고 데이터 전달[0m
+[17:05:16.764][INFO ][src/pkt.c:147] [32m[PKT-TX] 내 사고 조립 완료 (ACC_ID: 0x901F886900000000, Lane: 0, Sev: 2, Time: 3602879701896396800, Dir: 0)[0m
+[17:05:16.764][INFO ][src/pkt.c:185] [PKT-TX] WL-1 전체 패킷 조립 완료 (SenderID: 0x1111, AccID: 0x901F886900000000)
+[17:05:16.764][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:05:16.764][INFO ][src/wl.c:95] [1;32m[TX] WL-1 Broadcast Success! (ID: 0x1111)[0m
+[17:05:16.764][INFO ][src/pkt.c:211] PKT-RX: Loopback packet detected (ID: 0x1111). Self-dropping.
+[17:05:28.058][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 8 bytes
+[17:05:28.058][INFO ][src/yocto_if.c:159] [T9-RX] WL-4 수신: 방향(0), 시간(8781)
+[17:05:29.358][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 16 bytes
+[17:05:29.408][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 10 bytes
+[17:05:32.858][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 26 bytes
+[17:05:32.858][INFO ][src/yocto_if.c:182] [32m[T9-RX] WL-3 수신: 내 사고 데이터 전달[0m
+[17:05:32.861][INFO ][src/pkt.c:147] [32m[PKT-TX] 내 사고 조립 완료 (ACC_ID: 0xA01F886900000000, Lane: 0, Sev: 2, Time: 3746994889972252672, Dir: 0)[0m
+[17:05:32.861][INFO ][src/pkt.c:185] [PKT-TX] WL-1 전체 패킷 조립 완료 (SenderID: 0x1111, AccID: 0xA01F886900000000)
+[17:05:32.861][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:05:32.861][INFO ][src/wl.c:95] [1;32m[TX] WL-1 Broadcast Success! (ID: 0x1111)[0m
+[17:05:32.861][INFO ][src/pkt.c:211] PKT-RX: Loopback packet detected (ID: 0x1111). Self-dropping.
+[17:05:34.558][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 16 bytes
+[17:05:34.608][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 10 bytes
+[17:05:39.108][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 26 bytes
+[17:05:39.108][INFO ][src/yocto_if.c:182] [32m[T9-RX] WL-3 수신: 내 사고 데이터 전달[0m
+[17:05:39.109][INFO ][src/pkt.c:147] [32m[PKT-TX] 내 사고 조립 완료 (ACC_ID: 0xA61F886900000000, Lane: 0, Sev: 2, Time: 3891110078048108544, Dir: 0)[0m
+[17:05:39.109][INFO ][src/pkt.c:185] [PKT-TX] WL-1 전체 패킷 조립 완료 (SenderID: 0x1111, AccID: 0xA61F886900000000)
+[17:05:39.109][INFO ][src/wl.c:95] [1;32m[TX] WL-1 Broadcast Success! (ID: 0x1111)[0m
+[17:05:39.109][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:05:39.110][INFO ][src/pkt.c:211] PKT-RX: Loopback packet detected (ID: 0x1111). Self-dropping.
+[17:05:43.158][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 8 bytes
+[17:05:43.158][INFO ][src/yocto_if.c:159] [T9-RX] WL-4 수신: 방향(0), 시간(9096)
+[17:05:48.608][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 26 bytes
+[17:05:48.608][INFO ][src/yocto_if.c:182] [32m[T9-RX] WL-3 수신: 내 사고 데이터 전달[0m
+[17:05:48.617][INFO ][src/pkt.c:147] [32m[PKT-TX] 내 사고 조립 완료 (ACC_ID: 0xAF1F886900000000, Lane: 0, Sev: 2, Time: 3963167672086036480, Dir: 0)[0m
+[17:05:48.617][INFO ][src/pkt.c:185] [PKT-TX] WL-1 전체 패킷 조립 완료 (SenderID: 0x1111, AccID: 0xAF1F886900000000)
+[17:05:48.617][INFO ][src/wl.c:95] [1;32m[TX] WL-1 Broadcast Success! (ID: 0x1111)[0m
+[17:05:48.617][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:05:48.617][INFO ][src/pkt.c:211] PKT-RX: Loopback packet detected (ID: 0x1111). Self-dropping.
+[17:05:53.808][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 26 bytes
+[17:05:53.808][INFO ][src/yocto_if.c:182] [32m[T9-RX] WL-3 수신: 내 사고 데이터 전달[0m
+[17:05:53.809][INFO ][src/pkt.c:147] [32m[PKT-TX] 내 사고 조립 완료 (ACC_ID: 0xB51F886900000000, Lane: 0, Sev: 2, Time: 4035225266123964416, Dir: 0)[0m
+[17:05:53.809][INFO ][src/pkt.c:185] [PKT-TX] WL-1 전체 패킷 조립 완료 (SenderID: 0x1111, AccID: 0xB51F886900000000)
+[17:05:53.809][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:05:53.809][INFO ][src/wl.c:95] [1;32m[TX] WL-1 Broadcast Success! (ID: 0x1111)[0m
+[17:05:53.809][INFO ][src/pkt.c:211] PKT-RX: Loopback packet detected (ID: 0x1111). Self-dropping.
+[17:05:58.008][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 26 bytes
+[17:05:58.008][INFO ][src/yocto_if.c:182] [32m[T9-RX] WL-3 수신: 내 사고 데이터 전달[0m
+[17:05:58.015][INFO ][src/pkt.c:147] [32m[PKT-TX] 내 사고 조립 완료 (ACC_ID: 0xB91F886900000000, Lane: 0, Sev: 2, Time: 4107282860161892352, Dir: 0)[0m
+[17:05:58.015][INFO ][src/pkt.c:185] [PKT-TX] WL-1 전체 패킷 조립 완료 (SenderID: 0x1111, AccID: 0xB91F886900000000)
+[17:05:58.015][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:05:58.015][INFO ][src/wl.c:95] [1;32m[TX] WL-1 Broadcast Success! (ID: 0x1111)[0m
+[17:05:58.015][INFO ][src/pkt.c:211] PKT-RX: Loopback packet detected (ID: 0x1111). Self-dropping.
+[17:05:58.308][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 8 bytes
+[17:05:58.308][INFO ][src/yocto_if.c:159] [T9-RX] WL-4 수신: 방향(0), 시간(9667)
+[17:06:02.258][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 26 bytes
+[17:06:02.258][INFO ][src/yocto_if.c:182] [32m[T9-RX] WL-3 수신: 내 사고 데이터 전달[0m
+[17:06:02.261][INFO ][src/pkt.c:147] [32m[PKT-TX] 내 사고 조립 완료 (ACC_ID: 0xBD1F886900000000, Lane: 0, Sev: 2, Time: 4179340454199820288, Dir: 0)[0m
+[17:06:02.261][INFO ][src/pkt.c:185] [PKT-TX] WL-1 전체 패킷 조립 완료 (SenderID: 0x1111, AccID: 0xBD1F886900000000)
+[17:06:02.261][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:06:02.261][INFO ][src/wl.c:95] [1;32m[TX] WL-1 Broadcast Success! (ID: 0x1111)[0m
+[17:06:02.261][INFO ][src/pkt.c:211] PKT-RX: Loopback packet detected (ID: 0x1111). Self-dropping.
+[17:06:06.308][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 26 bytes
+[17:06:06.308][INFO ][src/yocto_if.c:182] [32m[T9-RX] WL-3 수신: 내 사고 데이터 전달[0m
+[17:06:06.315][INFO ][src/pkt.c:147] [32m[PKT-TX] 내 사고 조립 완료 (ACC_ID: 0xC11F886900000000, Lane: 0, Sev: 2, Time: 4251398048237748224, Dir: 0)[0m
+[17:06:06.315][INFO ][src/pkt.c:185] [PKT-TX] WL-1 전체 패킷 조립 완료 (SenderID: 0x1111, AccID: 0xC11F886900000000)
+[17:06:06.315][INFO ][src/wl.c:95] [1;32m[TX] WL-1 Broadcast Success! (ID: 0x1111)[0m
+[17:06:06.315][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:06:06.316][INFO ][src/pkt.c:211] PKT-RX: Loopback packet detected (ID: 0x1111). Self-dropping.
+[17:06:08.858][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 16 bytes
+[17:06:08.908][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 10 bytes
+[17:06:09.908][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 16 bytes
+[17:06:09.958][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 10 bytes
+[17:06:11.258][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 26 bytes
+[17:06:11.258][INFO ][src/yocto_if.c:182] [32m[T9-RX] WL-3 수신: 내 사고 데이터 전달[0m
+[17:06:11.266][INFO ][src/pkt.c:147] [32m[PKT-TX] 내 사고 조립 완료 (ACC_ID: 0xC61F886900000000, Lane: 0, Sev: 2, Time: 4467570830351532032, Dir: 0)[0m
+[17:06:11.266][INFO ][src/pkt.c:185] [PKT-TX] WL-1 전체 패킷 조립 완료 (SenderID: 0x1111, AccID: 0xC61F886900000000)
+[17:06:11.266][INFO ][src/wl.c:95] [1;32m[TX] WL-1 Broadcast Success! (ID: 0x1111)[0m
+[17:06:11.266][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:06:11.266][INFO ][src/pkt.c:211] PKT-RX: Loopback packet detected (ID: 0x1111). Self-dropping.
+[17:06:13.408][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 8 bytes
+[17:06:13.408][INFO ][src/yocto_if.c:159] [T9-RX] WL-4 수신: 방향(0), 시간(10494)
+[17:06:16.758][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 26 bytes
+[17:06:16.758][INFO ][src/yocto_if.c:182] [32m[T9-RX] WL-3 수신: 내 사고 데이터 전달[0m
+[17:06:16.765][INFO ][src/pkt.c:147] [32m[PKT-TX] 내 사고 조립 완료 (ACC_ID: 0xCC1F886900000000, Lane: 0, Sev: 2, Time: 4539628424389459968, Dir: 0)[0m
+[17:06:16.765][INFO ][src/pkt.c:185] [PKT-TX] WL-1 전체 패킷 조립 완료 (SenderID: 0x1111, AccID: 0xCC1F886900000000)
+[17:06:16.765][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:06:16.765][INFO ][src/wl.c:95] [1;32m[TX] WL-1 Broadcast Success! (ID: 0x1111)[0m
+[17:06:16.765][INFO ][src/pkt.c:211] PKT-RX: Loopback packet detected (ID: 0x1111). Self-dropping.
+[17:06:20.208][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 26 bytes
+[17:06:20.208][INFO ][src/yocto_if.c:182] [32m[T9-RX] WL-3 수신: 내 사고 데이터 전달[0m
+[17:06:20.216][INFO ][src/pkt.c:147] [32m[PKT-TX] 내 사고 조립 완료 (ACC_ID: 0xCF1F886900000000, Lane: 0, Sev: 2, Time: 4611686018427387904, Dir: 0)[0m
+[17:06:20.216][INFO ][src/pkt.c:185] [PKT-TX] WL-1 전체 패킷 조립 완료 (SenderID: 0x1111, AccID: 0xCF1F886900000000)
+[17:06:20.216][INFO ][src/wl.c:95] [1;32m[TX] WL-1 Broadcast Success! (ID: 0x1111)[0m
+[17:06:20.216][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:06:20.216][INFO ][src/pkt.c:211] PKT-RX: Loopback packet detected (ID: 0x1111). Self-dropping.
+[17:06:23.708][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 26 bytes
+[17:06:23.708][INFO ][src/yocto_if.c:182] [32m[T9-RX] WL-3 수신: 내 사고 데이터 전달[0m
+[17:06:23.717][INFO ][src/pkt.c:147] [32m[PKT-TX] 내 사고 조립 완료 (ACC_ID: 0xD31F886900000000, Lane: 0, Sev: 2, Time: 4683743612465315840, Dir: 0)[0m
+[17:06:23.717][INFO ][src/pkt.c:185] [PKT-TX] WL-1 전체 패킷 조립 완료 (SenderID: 0x1111, AccID: 0xD31F886900000000)
+[17:06:23.717][INFO ][src/wl.c:95] [1;32m[TX] WL-1 Broadcast Success! (ID: 0x1111)[0m
+[17:06:23.717][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:06:23.717][INFO ][src/pkt.c:211] PKT-RX: Loopback packet detected (ID: 0x1111). Self-dropping.
+[17:06:28.008][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 26 bytes
+[17:06:28.008][INFO ][src/yocto_if.c:182] [32m[T9-RX] WL-3 수신: 내 사고 데이터 전달[0m
+[17:06:28.014][INFO ][src/pkt.c:147] [32m[PKT-TX] 내 사고 조립 완료 (ACC_ID: 0xD71F886900000000, Lane: 0, Sev: 2, Time: 4755801206503243776, Dir: 0)[0m
+[17:06:28.014][INFO ][src/pkt.c:185] [PKT-TX] WL-1 전체 패킷 조립 완료 (SenderID: 0x1111, AccID: 0xD71F886900000000)
+[17:06:28.014][INFO ][src/wl.c:95] [1;32m[TX] WL-1 Broadcast Success! (ID: 0x1111)[0m
+[17:06:28.014][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:06:28.014][INFO ][src/pkt.c:211] PKT-RX: Loopback packet detected (ID: 0x1111). Self-dropping.
+[17:06:28.508][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 8 bytes
+[17:06:28.508][INFO ][src/yocto_if.c:159] [T9-RX] WL-4 수신: 방향(0), 시간(10809)
+[17:06:32.508][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 26 bytes
+[17:06:32.508][INFO ][src/yocto_if.c:182] [32m[T9-RX] WL-3 수신: 내 사고 데이터 전달[0m
+[17:06:32.512][INFO ][src/pkt.c:147] [32m[PKT-TX] 내 사고 조립 완료 (ACC_ID: 0xDB1F886900000000, Lane: 0, Sev: 2, Time: 4827858800541171712, Dir: 0)[0m
+[17:06:32.512][INFO ][src/pkt.c:185] [PKT-TX] WL-1 전체 패킷 조립 완료 (SenderID: 0x1111, AccID: 0xDB1F886900000000)
+[17:06:32.512][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+[17:06:32.512][INFO ][src/wl.c:95] 
+[1;32m[TX] WL-1 Broadcast Success! (ID: 0x1111)[0m[17:06:32.512][INFO ][src/pkt.c:211] PKT-RX: Loopback packet detected (ID: 0x1111). Self-dropping.
+
+[17:06:43.608][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 8 bytes
+[17:06:43.608][INFO ][src/yocto_if.c:159] [T9-RX] WL-4 수신: 방향(0), 시간(11892)
+[17:06:47.158][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 26 bytes
+[17:06:47.158][INFO ][src/yocto_if.c:182] [32m[T9-RX] WL-3 수신: 내 사고 데이터 전달[0m
+[17:06:47.160][INFO ][src/pkt.c:147] [32m[PKT-TX] 내 사고 조립 완료 (ACC_ID: 0xEA1F886900000000, Lane: 0, Sev: 2, Time: 4899916394579099648, Dir: 0)[0m
+[17:06:47.160][INFO ][src/pkt.c:185] [PKT-TX] WL-1 전체 패킷 조립 완료 (SenderID: 0x1111, AccID: 0xEA1F886900000000)
+[17:06:47.160][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:06:47.160][INFO ][src/wl.c:95] [1;32m[TX] WL-1 Broadcast Success! (ID: 0x1111)[0m
+[17:06:47.160][INFO ][src/pkt.c:211] PKT-RX: Loopback packet detected (ID: 0x1111). Self-dropping.
+[17:06:58.708][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 8 bytes
+[17:06:58.708][INFO ][src/yocto_if.c:159] [T9-RX] WL-4 수신: 방향(0), 시간(12719)
+[17:07:02.058][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 26 bytes
+[17:07:02.058][INFO ][src/yocto_if.c:182] [32m[T9-RX] WL-3 수신: 내 사고 데이터 전달[0m
+[17:07:02.063][INFO ][src/pkt.c:147] [32m[PKT-TX] 내 사고 조립 완료 (ACC_ID: 0xF91F886900000000, Lane: 0, Sev: 2, Time: 4971973988617027584, Dir: 0)[0m
+[17:07:02.063][INFO ][src/pkt.c:185] [PKT-TX] WL-1 전체 패킷 조립 완료 (SenderID: 0x1111, AccID: 0xF91F886900000000)
+[17:07:02.063][INFO ][src/wl.c:95] [1;32m[TX] WL-1 Broadcast Success! (ID: 0x1111)[0m
+[17:07:02.063][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:07:02.063][INFO ][src/pkt.c:211] PKT-RX: Loopback packet detected (ID: 0x1111). Self-dropping.
+[17:07:03.217][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:07:05.217][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:07:07.217][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:07:10.608][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 26 bytes
+[17:07:10.608][INFO ][src/yocto_if.c:182] [32m[T9-RX] WL-3 수신: 내 사고 데이터 전달[0m
+[17:07:10.615][INFO ][src/pkt.c:147] [32m[PKT-TX] 내 사고 조립 완료 (ACC_ID: 0x120886900000000, Lane: 0, Sev: 2, Time: 5044031582654955520, Dir: 0)[0m
+[17:07:10.615][INFO ][src/pkt.c:185] [PKT-TX] WL-1 전체 패킷 조립 완료 (SenderID: 0x1111, AccID: 0x120886900000000)
+[17:07:10.615][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:07:10.616][INFO ][src/wl.c:95] [1;32m[TX] WL-1 Broadcast Success! (ID: 0x1111)[0m
+[17:07:10.616][INFO ][src/pkt.c:211] PKT-RX: Loopback packet detected (ID: 0x1111). Self-dropping.
+[17:07:11.217][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:07:11.220][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:07:13.808][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 8 bytes
+[17:07:13.808][INFO ][src/yocto_if.c:159] [T9-RX] WL-4 수신: 방향(0), 시간(13546)
+[17:07:15.218][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:07:15.221][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:07:17.218][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:07:17.221][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:07:19.218][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:07:19.221][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:07:21.218][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:07:21.221][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:07:23.218][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:07:23.221][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:07:25.058][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 26 bytes
+[17:07:25.058][INFO ][src/yocto_if.c:182] [32m[T9-RX] WL-3 수신: 내 사고 데이터 전달[0m
+[17:07:25.064][INFO ][src/pkt.c:147] [32m[PKT-TX] 내 사고 조립 완료 (ACC_ID: 0x1020886900000000, Lane: 0, Sev: 2, Time: 5116089176692883456, Dir: 0)[0m
+[17:07:25.064][INFO ][src/pkt.c:185] [PKT-TX] WL-1 전체 패킷 조립 완료 (SenderID: 0x1111, AccID: 0x1020886900000000)
+[17:07:25.064][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:07:25.064][INFO ][src/pkt.c:211] PKT-RX: Loopback packet detected (ID: 0x1111). Self-dropping.
+[17:07:25.064][INFO ][src/wl.c:95] [1;32m[TX] WL-1 Broadcast Success! (ID: 0x1111)[0m
+[17:07:25.219][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:07:25.221][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:07:25.224][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:07:27.219][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:07:27.222][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:07:27.225][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:07:28.908][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 8 bytes
+[17:07:28.908][INFO ][src/yocto_if.c:159] [T9-RX] WL-4 수신: 방향(0), 시간(13861)
+[17:07:29.219][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:07:29.222][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:07:29.225][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:07:31.219][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:07:31.222][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:07:31.225][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:07:33.219][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:07:33.222][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:07:33.225][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:07:33.508][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 26 bytes
+[17:07:33.508][INFO ][src/yocto_if.c:182] [32m[T9-RX] WL-3 수신: 내 사고 데이터 전달[0m
+[17:07:33.516][INFO ][src/pkt.c:147] [32m[PKT-TX] 내 사고 조립 완료 (ACC_ID: 0x1820886900000000, Lane: 0, Sev: 2, Time: 5188146770730811392, Dir: 0)[0m
+[17:07:33.516][INFO ][src/pkt.c:185] [PKT-TX] WL-1 전체 패킷 조립 완료 (SenderID: 0x1111, AccID: 0x1820886900000000)
+[17:07:33.516][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:07:33.516][INFO ][src/wl.c:95] [1;32m[TX] WL-1 Broadcast Success! (ID: 0x1111)[0m
+[17:07:33.516][INFO ][src/pkt.c:211] PKT-RX: Loopback packet detected (ID: 0x1111). Self-dropping.
+[17:07:35.219][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:07:35.226][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:07:35.232][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:07:36.508][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 26 bytes
+[17:07:36.508][INFO ][src/yocto_if.c:182] [32m[T9-RX] WL-3 수신: 내 사고 데이터 전달[0m
+[17:07:36.514][INFO ][src/pkt.c:147] [32m[PKT-TX] 내 사고 조립 완료 (ACC_ID: 0x1B20886900000000, Lane: 0, Sev: 2, Time: 5260204364768739328, Dir: 0)[0m
+[17:07:36.514][INFO ][src/pkt.c:185] [PKT-TX] WL-1 전체 패킷 조립 완료 (SenderID: 0x1111, AccID: 0x1B20886900000000)
+[17:07:36.514][INFO ][src/wl.c:95] [1;32m[TX] WL-1 Broadcast Success! (ID: 0x1111)[0m
+[17:07:36.514][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:07:36.514][INFO ][src/pkt.c:211] PKT-RX: Loopback packet detected (ID: 0x1111). Self-dropping.
+[17:07:37.225][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:07:38.758][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 26 bytes
+[17:07:38.758][INFO ][src/yocto_if.c:182] [32m[T9-RX] WL-3 수신: 내 사고 데이터 전달[0m
+[17:07:38.758][INFO ][src/pkt.c:147] [32m[PKT-TX] 내 사고 조립 완료 (ACC_ID: 0x1E20886900000000, Lane: 0, Sev: 2, Time: 5332261958806667264, Dir: 0)[0m
+[17:07:38.758][INFO ][src/pkt.c:185] [PKT-TX] WL-1 전체 패킷 조립 완료 (SenderID: 0x1111, AccID: 0x1E20886900000000)
+[17:07:38.758][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:07:38.758][INFO ][src/wl.c:95] [1;32m[TX] WL-1 Broadcast Success! (ID: 0x1111)[0m
+[17:07:38.758][INFO ][src/pkt.c:211] PKT-RX: Loopback packet detected (ID: 0x1111). Self-dropping.
+[17:07:39.221][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:07:39.224][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:07:39.227][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:07:39.230][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:07:39.233][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:07:39.236][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:07:41.220][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:07:41.223][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:07:41.229][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:07:41.231][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:07:41.234][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:07:41.237][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:07:41.858][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 26 bytes
+[17:07:41.858][INFO ][src/yocto_if.c:182] [32m[T9-RX] WL-3 수신: 내 사고 데이터 전달[0m
+[17:07:41.867][INFO ][src/pkt.c:147] [32m[PKT-TX] 내 사고 조립 완료 (ACC_ID: 0x2120886900000000, Lane: 0, Sev: 2, Time: 5404319552844595200, Dir: 0)[0m
+[17:07:41.867][INFO ][src/pkt.c:185] [PKT-TX] WL-1 전체 패킷 조립 완료 (SenderID: 0x1111, AccID: 0x2120886900000000)
+[17:07:41.867][INFO ][src/wl.c:95] [1;32m[TX] WL-1 Broadcast Success! (ID: 0x1111)[0m
+[17:07:41.867][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:07:41.867][INFO ][src/pkt.c:211] PKT-RX: Loopback packet detected (ID: 0x1111). Self-dropping.
+[17:07:43.220][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:07:43.223][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:07:43.226][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:07:43.229][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:07:43.232][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:07:43.234][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:07:43.237][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:07:44.058][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 8 bytes
+[17:07:44.058][INFO ][src/yocto_if.c:159] [T9-RX] WL-4 수신: 방향(0), 시간(14688)
+[17:07:45.221][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:07:45.224][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:07:45.227][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:07:45.230][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:07:45.233][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:07:45.235][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:07:45.239][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:07:45.358][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 16 bytes
+[17:07:45.408][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 10 bytes
+[17:07:47.220][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:07:47.223][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:07:47.226][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:07:47.229][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:07:47.232][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:07:47.235][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:07:47.238][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:07:49.221][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:07:49.223][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:07:49.226][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:07:49.229][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:07:49.233][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:07:49.235][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:07:49.238][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:07:51.221][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:07:51.223][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:07:51.226][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:07:51.229][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:07:51.232][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:07:51.235][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:07:51.238][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:07:51.558][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 26 bytes
+[17:07:51.558][INFO ][src/yocto_if.c:182] [32m[T9-RX] WL-3 수신: 내 사고 데이터 전달[0m
+[17:07:51.566][INFO ][src/pkt.c:147] [32m[PKT-TX] 내 사고 조립 완료 (ACC_ID: 0x2A20886900000000, Lane: 0, Sev: 2, Time: 5548434740920451072, Dir: 0)[0m
+[17:07:51.567][INFO ][src/pkt.c:185] [PKT-TX] WL-1 전체 패킷 조립 완료 (SenderID: 0x1111, AccID: 0x2A20886900000000)
+[17:07:51.567][INFO ][src/wl.c:95] [1;32m[TX] WL-1 Broadcast Success! (ID: 0x1111)[0m
+[17:07:51.567][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:07:51.567][INFO ][src/pkt.c:211] PKT-RX: Loopback packet detected (ID: 0x1111). Self-dropping.
+[17:07:53.221][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:07:53.224][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:07:53.227][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:07:53.230][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:07:53.233][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:07:53.236][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:07:53.239][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:07:53.242][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:07:55.221][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:07:55.224][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:07:55.227][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:07:55.230][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:07:55.233][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:07:55.235][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:07:55.238][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:07:55.241][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:07:57.227][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:07:57.230][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:07:57.233][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:07:57.235][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:07:59.158][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 8 bytes
+[17:07:59.158][INFO ][src/yocto_if.c:159] [T9-RX] WL-4 수신: 방향(0), 시간(15259)
+[17:07:59.221][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:07:59.224][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:07:59.227][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:07:59.230][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:07:59.233][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:07:59.236][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:07:59.239][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:08:01.222][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:08:01.224][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:08:01.227][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:08:01.230][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:08:01.234][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:08:01.237][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:08:03.222][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:08:03.224][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:08:03.227][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:08:03.230][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:08:03.233][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:08:03.236][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:08:05.222][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:08:05.224][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:08:05.231][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:08:05.234][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:08:07.222][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:08:07.224][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:08:07.228][INFO ][src/wl.c:64] [1;32m[RX] Packet Received![0m
+
+[17:08:14.258][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 8 bytes
+[17:08:14.258][INFO ][src/yocto_if.c:159] [T9-RX] WL-4 수신: 방향(0), 시간(15574)
+[17:08:29.358][INFO ][src/yocto_if.c:139] [T9] UART Data Received: 8 bytes
+[17:08:29.358][INFO ][src/yocto_if.c:159] [T9-RX] WL-4 수신: 방향(0), 시간(15633)
